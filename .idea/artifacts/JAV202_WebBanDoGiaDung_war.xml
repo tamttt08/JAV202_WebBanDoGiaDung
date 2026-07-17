@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="JAV202_WebBanDoGiaDung:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>JAV202_WebBanDoGiaDung</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="JAV202_WebBanDoGiaDung-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="JAV202_WebBanDoGiaDung:war exploded" />
+    </root>
+  </artifact>
+</component>
