@@ -10,7 +10,7 @@ import java.util.List;
 public class FeedbackDAO implements CrudDAO<Feedback, Integer> {
 
     @Override
-    public void insert(Feedback entity) {
+    public void create(Feedback entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

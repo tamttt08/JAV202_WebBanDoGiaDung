@@ -10,7 +10,7 @@ import java.util.List;
 public class AccountDAO implements CrudDAO<Account, Integer> {
 
     @Override
-    public void insert(Account entity) {
+    public void create(Account entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

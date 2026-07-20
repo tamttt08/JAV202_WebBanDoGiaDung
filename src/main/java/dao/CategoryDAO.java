@@ -10,7 +10,7 @@ import java.util.List;
 public class CategoryDAO implements CrudDAO<Category, Integer> {
 
     @Override
-    public void insert(Category entity) {
+    public void create(Category entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

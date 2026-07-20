@@ -10,7 +10,7 @@ import java.util.List;
 public class ProductDAO implements CrudDAO<Product, Integer> {
 
     @Override
-    public void insert(Product entity) {
+    public void create(Product entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

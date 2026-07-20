@@ -11,7 +11,7 @@ import java.util.List;
 public class CartDAO implements CrudDAO<Cart, Integer> {
 
     @Override
-    public void insert(Cart entity) {
+    public void create(Cart entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

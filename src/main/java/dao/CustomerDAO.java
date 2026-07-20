@@ -11,7 +11,7 @@ import java.util.List;
 public class CustomerDAO implements CrudDAO<Customer, Integer> {
 
     @Override
-    public void insert(Customer entity) {
+    public void create(Customer entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

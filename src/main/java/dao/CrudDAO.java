@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface CrudDAO<T, K> {
 
-    void insert(T entity);
+    void create(T entity);
 
     void update(T entity);
 

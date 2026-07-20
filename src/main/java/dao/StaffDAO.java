@@ -11,7 +11,7 @@ import java.util.List;
 public class StaffDAO implements CrudDAO<Staff, Integer> {
 
     @Override
-    public void insert(Staff entity) {
+    public void create(Staff entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();

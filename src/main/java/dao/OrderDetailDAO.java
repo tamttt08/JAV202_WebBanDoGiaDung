@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderDetailDAO implements CrudDAO<OrderDetail, Integer> {
 
     @Override
-    public void insert(OrderDetail entity) {
+    public void create(OrderDetail entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
