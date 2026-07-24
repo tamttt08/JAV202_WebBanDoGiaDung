@@ -91,10 +91,6 @@ public class CategoryDAO implements CrudDAO<Category, Integer> {
         }
     }
 
-    /**
-     * Hàm bổ sung: Tìm kiếm danh mục theo tên.
-     * Hữu ích khi kiểm tra danh mục trùng lặp hoặc tìm kiếm trên thanh điều hướng.
-     */
     public List<Category> findByCategoryName(String name) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {

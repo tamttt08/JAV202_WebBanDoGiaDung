@@ -39,6 +39,9 @@ public class Account {
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Staff staff;
 
+    @Column(name = "Active")
+    private boolean active = true;
+
     public enum Role {
         Customer, Staff, Manager
     }

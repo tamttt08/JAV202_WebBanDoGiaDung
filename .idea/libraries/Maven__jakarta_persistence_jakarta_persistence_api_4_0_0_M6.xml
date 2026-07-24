@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: jakarta.persistence:jakarta.persistence-api:4.0.0-M6">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/jakarta/persistence/jakarta.persistence-api/4.0.0-M6/jakarta.persistence-api-4.0.0-M6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/jakarta/persistence/jakarta.persistence-api/4.0.0-M6/jakarta.persistence-api-4.0.0-M6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/jakarta/persistence/jakarta.persistence-api/4.0.0-M6/jakarta.persistence-api-4.0.0-M6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

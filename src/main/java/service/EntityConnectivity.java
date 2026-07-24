@@ -10,20 +10,20 @@ public class EntityConnectivity {
         try {
             // Khởi tạo ngay khi class được load
             emf = Persistence.createEntityManagerFactory("BanDoGiaDung");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Không thể khởi tạo EntityManagerFactory!");
+        } catch (Throwable e) {
+            System.err.println("LỖI KHI KHỎI TẠO ENTITY MANAGER FACTORY:");
+            e.printStackTrace(); // In chi tiết nguyên nhân gốc ra Console
+            throw new RuntimeException("Không thể khởi tạo EntityManagerFactory!", e);
         }
     }
-    // Mỗi khi cần dùng ở Service, các bạn gọi hàm này để lấy một "ông thợ" mới
+
     public static EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    // Hàm này dùng để đóng xưởng khi tắt Server (thường gọi ở ContextListener)
+
     public static void closeFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();
         }
     }
-
 }

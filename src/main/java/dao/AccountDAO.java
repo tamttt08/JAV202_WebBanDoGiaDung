@@ -91,11 +91,6 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
         }
     }
 
-    /**
-     * Hàm bổ sung: Tìm kiếm tài khoản bằng Username (rất cần thiết khi làm chức năng Đăng nhập)
-     * @param username Tên đăng nhập
-     * @return Đối tượng Account nếu tìm thấy, ngược lại trả về null
-     */
     public Account findByUsername(String username) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
@@ -104,7 +99,6 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             query.setParameter("username", username);
             return query.getSingleResult();
         } catch (Exception e) {
-            // Trả về null nếu không tìm thấy user thay vì ném ngoại lệ NoResultException
             return null;
         } finally {
             em.close();
