@@ -1,2 +1,23 @@
-package servlet;public class LogoutServlet {
+package servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import util.AuthUtil;
+
+import java.io.IOException;
+
+@WebServlet("/logout")
+public class LogoutServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Xóa Session đăng nhập
+        AuthUtil.clear(request);
+        // Chuyển hướng về trang chủ
+        response.sendRedirect(request.getContextPath() + "/home");
+    }
 }

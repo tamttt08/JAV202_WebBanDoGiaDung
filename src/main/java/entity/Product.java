@@ -17,6 +17,9 @@ public class Product {
     @Column(name = "ProductID")
     private Integer productID;
 
+    @Column(name = "ProductCode", unique = true, length = 20)
+    private String productCode;
+
     @Column(name = "ProductName", nullable = false, length = 150)
     private String productName;
 

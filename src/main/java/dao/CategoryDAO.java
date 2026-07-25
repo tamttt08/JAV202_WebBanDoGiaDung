@@ -105,4 +105,32 @@ public class CategoryDAO implements CrudDAO<Category, Integer> {
             em.close();
         }
     }
+
+    public long countCategories() {
+        EntityManager em = EntityConnectivity.getEntityManager(); // Hoặc cách cậu lấy EntityManager trong project
+        try {
+            String jpql = "SELECT COUNT(c) FROM Category c";
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getMaxCategoryId() {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            String jpql = "SELECT COALESCE(MAX(c.categoryId), 0) FROM Category c";
+            TypedQuery<Integer> query = em.createQuery(jpql, Integer.class);
+            return query.getSingleResult().longValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            em.close();
+        }
+    }
 }
