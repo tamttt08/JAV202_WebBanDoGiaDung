@@ -24,6 +24,6 @@ public class AdminProductServlet extends HttpServlet {
         request.setAttribute("products", products);
 
         // Forward tới file Fragment nhỏ thay vì nguyên file JSP to
-        request.getRequestDispatcher("/views/admin/fragments/product-table.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/admin/fragments/product-table.jsp").forward(request, response);
     }
 }

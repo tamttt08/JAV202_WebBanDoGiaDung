@@ -27,7 +27,7 @@ public class FeedbackDAO implements CrudDAO<Feedback, Integer> {
     }
 
     @Override
-    public void update(Feedback entity) {
+    public boolean update(Feedback entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -41,6 +41,7 @@ public class FeedbackDAO implements CrudDAO<Feedback, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override

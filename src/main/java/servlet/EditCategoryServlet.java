@@ -28,7 +28,7 @@ public class EditCategoryServlet extends HttpServlet {
         }
 
         request.setAttribute("category", category);
-        request.getRequestDispatcher("/views/admin/category-edit.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/admin/category-edit.jsp").forward(request, response);
     }
 
     // 2. Nhận dữ liệu cập nhật từ Form và lưu vào DB

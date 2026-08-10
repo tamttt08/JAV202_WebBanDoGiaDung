@@ -23,21 +23,30 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Lấy danh sách danh mục cho Menu
+        // 1. Lấy danh sách danh mục cho Menu bên trái
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
 
+        // 2. Lấy tham số tìm kiếm & lọc từ URL
         String keyword = request.getParameter("keyword");
         String categoryIdStr = request.getParameter("categoryId");
-        Integer categoryId = (categoryIdStr != null && !categoryIdStr.isEmpty()) ? Integer.parseInt(categoryIdStr) : null;
+        Integer categoryId = null;
 
+        if (categoryIdStr != null && !categoryIdStr.trim().isEmpty()) {
+            try {
+                categoryId = Integer.parseInt(categoryIdStr.trim());
+            } catch (NumberFormatException e) {
+                categoryId = null; // Tránh nổ lỗi nếu categoryId không phải là số
+            }
+        }
+
+        // 3. Lọc danh sách sản phẩm theo categoryId
         List<Product> products = productDAO.filterProducts(keyword, categoryId, null, null, "newest");
 
-        request.setAttribute("products", products);
-
+        // 4. Đưa dữ liệu sang JSP
         request.setAttribute("products", products);
 
         // Forward tới trang home.jsp
-        request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
     }
 }

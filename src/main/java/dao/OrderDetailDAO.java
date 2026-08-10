@@ -27,7 +27,7 @@ public class OrderDetailDAO implements CrudDAO<OrderDetail, Integer> {
     }
 
     @Override
-    public void update(OrderDetail entity) {
+    public boolean update(OrderDetail entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -41,6 +41,7 @@ public class OrderDetailDAO implements CrudDAO<OrderDetail, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override

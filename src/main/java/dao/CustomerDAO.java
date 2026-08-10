@@ -2,6 +2,7 @@ package dao;
 
 import entity.Customer;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import service.EntityConnectivity;
@@ -28,19 +29,32 @@ public class CustomerDAO implements CrudDAO<Customer, Integer> {
     }
 
     @Override
-    public void update(Customer entity) {
+    public boolean update(Customer customer) {
         EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
         try {
-            em.getTransaction().begin();
-            em.merge(entity);
-            em.getTransaction().commit();
+            trans.begin();
+
+            // 🔴 Dùng merge để cập nhật entity vào Context
+            Customer updatedCustomer = em.merge(customer);
+
+            // 🔴 Flush để đẩy ngay thay đổi xuống Database kiểm tra lỗi SQL
+            em.flush();
+
+            // 🔴 Commit transaction
+            trans.commit();
+            return true;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (trans != null && trans.isActive()) {
+                trans.rollback(); // Nếu có lỗi thì rollback lại
             }
-            e.printStackTrace();
+            System.err.println("Lỗi cập nhật Customer:");
+            e.printStackTrace(); // 👈 Cậu xem log trên console IntelliJ xem nó in ra lỗi gì ở đây
+            return false;
         } finally {
-            em.close();
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 

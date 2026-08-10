@@ -1,10 +1,13 @@
 package dao;
 
 import entity.Order;
+import entity.OrderDetail;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import service.EntityConnectivity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrderDAO implements CrudDAO<Order, Integer> {
@@ -27,7 +30,7 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
     }
 
     @Override
-    public void update(Order entity) {
+    public boolean update(Order entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -41,6 +44,7 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override
@@ -80,7 +84,8 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
     public List<Order> findAll() {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
-            String jpql = "SELECT o FROM Order o ORDER BY o.orderDate DESC";
+            // Dùng LEFT JOIN FETCH để nạp sẵn customer và orderDetails
+            String jpql = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.customer LEFT JOIN FETCH o.orderDetails ORDER BY o.orderDate DESC";
             TypedQuery<Order> query = em.createQuery(jpql, Order.class);
             return query.getResultList();
         } catch (Exception e) {
@@ -110,29 +115,117 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
         }
     }
 
-    /**
-     * Hàm bổ sung: Cập nhật nhanh trạng thái của một đơn hàng (Pending, Paid, Cancelled).
-     * Dùng cho trang quản trị khi nhân viên xử lý duyệt đơn/xác nhận thanh toán.
-     */
-    public boolean updateStatus(Integer orderId, Order.OrderStatus status) {
+    public Order findByIdWithDetails(int orderId) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
-            em.getTransaction().begin();
+            String jpql = "SELECT DISTINCT o FROM Order o " +
+                    "LEFT JOIN FETCH o.customer " +
+                    "LEFT JOIN FETCH o.orderDetails od " +
+                    "LEFT JOIN FETCH od.product " +
+                    "WHERE o.orderID = :orderId";
+            TypedQuery<Order> query = em.createQuery(jpql, Order.class);
+            query.setParameter("orderId", orderId);
+
+            List<Order> list = query.getResultList();
+            if (list != null && !list.isEmpty()) {
+                return list.get(0);
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void recalculateTotalAmount(int orderId) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
             Order order = em.find(Order.class, orderId);
             if (order != null) {
-                order.setStatus(status);
-                em.getTransaction().commit();
-                return true;
+                // Khai báo sum kiểu BigDecimal bắt đầu từ 0
+                java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+
+                for (OrderDetail od : order.getOrderDetails()) {
+                    if (od.getUnitPrice() != null && od.getQuantity() != null) {
+                        // Dùng multiply và BigDecimal.valueOf để nhân
+                        java.math.BigDecimal itemTotal = od.getUnitPrice()
+                                .multiply(java.math.BigDecimal.valueOf(od.getQuantity()));
+
+                        total = total.add(itemTotal);
+                    }
+                }
+                order.setTotalAmount(total);
+                em.merge(order);
             }
-            return false;
+            trans.commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (trans.isActive()) trans.rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean updateStatus(int orderId, Order.OrderStatus status) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            Order order = em.find(Order.class, orderId);
+            if (order != null) {
+                order.setStatus(status); // Cập nhật Enum Status
+                em.merge(order);
             }
+            trans.commit();
+            return true;
+        } catch (Exception e) {
+            if (trans.isActive()) trans.rollback();
             e.printStackTrace();
             return false;
         } finally {
-            em.close();
+            if (em != null && em.isOpen()) em.close();
+        }
+    }
+
+    // 1. Tính tổng doanh thu (Chỉ tính các đơn đã thành công / Delivered / Completed)
+    public BigDecimal getTotalRevenue() {
+        String jpql = "SELECT SUM(o.totalAmount) FROM Order o WHERE o.status = :status";
+        try {
+            EntityManager em = EntityConnectivity.getEntityManager();
+            Object result = em.createQuery(jpql)
+                    .setParameter("status", Order.OrderStatus.Delivered) // Hoặc trạng thái hoàn thành của cậu
+                    .getSingleResult();
+            return result != null ? (BigDecimal) result : BigDecimal.ZERO;
+        } catch (Exception e) {
+            return BigDecimal.ZERO; // Trả về 0 nếu chưa có đơn nào, tránh bị NULL gây crash
+        }
+    }
+
+    // 2. Đếm tổng số đơn hàng
+    public long countTotalOrders() {
+        String jpql = "SELECT COUNT(o) FROM Order o";
+        try {
+            EntityManager em = EntityConnectivity.getEntityManager();
+            return (Long) em.createQuery(jpql).getSingleResult();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    // 3. Đếm số đơn hàng đang chờ xử lý (Pending)
+    public long countPendingOrders() {
+        String jpql = "SELECT COUNT(o) FROM Order o WHERE o.status = :status";
+        try {
+            EntityManager em = EntityConnectivity.getEntityManager();
+            return (Long) em.createQuery(jpql)
+                    .setParameter("status", Order.OrderStatus.Pending)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return 0;
         }
     }
 }

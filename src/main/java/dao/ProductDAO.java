@@ -28,7 +28,7 @@ public class ProductDAO implements CrudDAO<Product, Integer> {
     }
 
     @Override
-    public void update(Product entity) {
+    public boolean update(Product entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -42,6 +42,7 @@ public class ProductDAO implements CrudDAO<Product, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override
@@ -164,7 +165,7 @@ public class ProductDAO implements CrudDAO<Product, Integer> {
 
             // 2. Lọc theo danh mục (Khớp với p.category.categoryID)
             if (categoryId != null && categoryId > 0) {
-                jpql.append(" AND p.category.categoryID = :categoryId");
+                jpql.append(" AND p.category.categoryId = :categoryId");
             }
 
             // 3. Lọc theo khoảng giá

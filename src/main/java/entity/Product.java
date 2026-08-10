@@ -3,6 +3,7 @@ package entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -36,6 +37,9 @@ public class Product {
     @Column(name = "Description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "Image", length = 255)
-    private String image;
+    @Column(name = "MainImage", length = 255)
+    private String mainImage;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<ProductImage> images;
 }

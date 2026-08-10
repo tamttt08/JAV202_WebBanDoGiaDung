@@ -28,7 +28,7 @@ public class StaffDAO implements CrudDAO<Staff, Integer> {
     }
 
     @Override
-    public void update(Staff entity) {
+    public boolean update(Staff entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -42,6 +42,7 @@ public class StaffDAO implements CrudDAO<Staff, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override

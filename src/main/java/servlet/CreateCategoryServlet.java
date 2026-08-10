@@ -19,7 +19,7 @@ public class CreateCategoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Hiển thị giao diện form thêm danh mục
-        request.getRequestDispatcher("/views/admin/category-add.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/admin/category-add.jsp").forward(request, response);
     }
 
     @Override

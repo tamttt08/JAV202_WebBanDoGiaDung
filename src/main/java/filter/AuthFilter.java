@@ -24,7 +24,7 @@ public class AuthFilter implements Filter {
         // 1. Kiểm tra nếu chưa đăng nhập thì đá về trang đăng nhập
         if (!AuthUtil.isAuthenticated(req)) {
             req.getSession().setAttribute("REDIRECT_URL", uriString);
-            res.sendRedirect(req.getContextPath() + "/dang-nhap");
+            res.sendRedirect(req.getContextPath() + "/login");
             return; // Dừng lại ở đây luôn, không chạy tiếp xuống dưới!
         }
 

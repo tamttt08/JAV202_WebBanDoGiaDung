@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Hiển thị trang đăng nhập
-        request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class LoginServlet extends HttpServlet {
         // 1. Kiểm tra đầu vào rỗng
         if (username.isEmpty() || password.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!");
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 
@@ -57,14 +57,14 @@ public class LoginServlet extends HttpServlet {
         // Nếu dùng mã hóa mật khẩu thì so sánh qua BCrypt/MD5, ở đây giả định so sánh chuỗi trực tiếp
         if (account == null || !account.getPassword().equals(password)) {
             request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không chính xác!");
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 
         // 3. Kiểm tra xem tài khoản có bị KHOÁ (active = false) không
         if (!account.isActive()) {
             request.setAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!");
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 

@@ -51,7 +51,7 @@ public class AdminCategoryServlet extends HttpServlet {
             request.setAttribute("categories", list);
 
             // Forward duy nhất về Fragment HTML
-            request.getRequestDispatcher("/views/admin/fragments/category-table.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/admin/fragments/category-table.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

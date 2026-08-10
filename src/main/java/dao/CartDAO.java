@@ -28,7 +28,7 @@ public class CartDAO implements CrudDAO<Cart, Integer> {
     }
 
     @Override
-    public void update(Cart entity) {
+    public boolean update(Cart entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -42,6 +42,7 @@ public class CartDAO implements CrudDAO<Cart, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override

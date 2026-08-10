@@ -27,7 +27,7 @@ public class CategoryDAO implements CrudDAO<Category, Integer> {
     }
 
     @Override
-    public void update(Category entity) {
+    public boolean update(Category entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -41,6 +41,7 @@ public class CategoryDAO implements CrudDAO<Category, Integer> {
         } finally {
             em.close();
         }
+        return false;
     }
 
     @Override

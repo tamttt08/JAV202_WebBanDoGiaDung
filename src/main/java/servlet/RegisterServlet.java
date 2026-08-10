@@ -35,7 +35,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
     }
 
     @Override
@@ -54,20 +54,20 @@ public class RegisterServlet extends HttpServlet {
         // 1. Validate dữ liệu cơ bản
         if (username.isEmpty() || password.isEmpty() || fullName.isEmpty() || email.isEmpty()) {
             request.setAttribute("error", "Vui lòng điền đầy đủ các thông tin bắt buộc!");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Xác nhận mật khẩu không trùng khớp!");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
             return;
         }
 
         // 2. Kiểm tra Username đã tồn tại trong DB chưa
         if (accountDAO.findByUsername(username) != null) {
             request.setAttribute("error", "Tên đăng nhập này đã được sử dụng!");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
             return;
         }
 
@@ -95,12 +95,12 @@ public class RegisterServlet extends HttpServlet {
 
             // 5. Chuyển hướng sang trang Đăng nhập và báo thành công
             request.setAttribute("success", "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Có lỗi xảy ra trong quá trình đăng ký. Vui lòng thử lại!");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
         }
     }
 }

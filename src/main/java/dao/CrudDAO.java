@@ -11,7 +11,7 @@ public interface CrudDAO<T, K> {
 
     void create(T entity);
 
-    void update(T entity);
+    boolean update(T entity);
 
     void delete(K id);
 

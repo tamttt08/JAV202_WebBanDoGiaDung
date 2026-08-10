@@ -1,9 +1,12 @@
 package dao;
 
 import entity.Account;
+import entity.Customer;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import service.EntityConnectivity; // Import class quản lý kết nối của cậu
+import service.EntityConnectivity;
 
 import java.util.List;
 
@@ -27,17 +30,19 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
     }
 
     @Override
-    public void update(Account entity) {
+    public boolean update(Account entity) {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
             em.getTransaction().begin();
             em.merge(entity);
             em.getTransaction().commit();
+            return true; // Sửa thêm return true khi update thành công nhé
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
             e.printStackTrace();
+            return false;
         } finally {
             em.close();
         }
@@ -99,6 +104,115 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             query.setParameter("username", username);
             return query.getSingleResult();
         } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    // --- BỔ SUNG 1: Kiểm tra username đã tồn tại hay chưa ---
+    public boolean existsByUsername(String username) {
+        if (username == null) return false;
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(a) FROM Account a WHERE LOWER(a.username) = :username";
+            Long count = em.createQuery(jpql, Long.class)
+                    .setParameter("username", username.trim().toLowerCase())
+                    .getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    // --- BỔ SUNG 2: Lưu Account cùng lúc với Customer (sử dụng 1 Transaction) ---
+    public boolean createAccountWithCustomer(Account account, Customer customer) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+
+            // 1. Lưu Account
+            em.persist(account);
+
+            // 2. Gán Account cho Customer rồi lưu Customer
+            customer.setAccount(account);
+            em.persist(customer);
+
+            trans.commit();
+            return true;
+        } catch (Exception e) {
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean updateAccountStatus(int accountId, boolean isActive) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            String jpql = "UPDATE Account a SET a.active = :active WHERE a.accountID = :id";
+            int updatedRows = em.createQuery(jpql)
+                    .setParameter("active", isActive)
+                    .setParameter("id", accountId)
+                    .executeUpdate();
+            em.getTransaction().commit();
+            return updatedRows > 0;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean updateAccountRole(int accountId, String newRole) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            String jpql = "UPDATE Account a SET a.role = :role WHERE a.accountID = :id";
+            int updatedRows = em.createQuery(jpql)
+                    .setParameter("role", newRole)
+                    .setParameter("id", accountId)
+                    .executeUpdate();
+            em.getTransaction().commit();
+            return updatedRows > 0;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Account findByEmail(String email) {
+        if (email == null) return null;
+        email = email.trim().toLowerCase();
+
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            String jpql = "SELECT c.account FROM Customer c WHERE LOWER(c.email) = :email";
+            TypedQuery<Account> query = em.createQuery(jpql, Account.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         } finally {
             em.close();
