@@ -22,9 +22,15 @@
         <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">
             <i class="bi bi-shop me-2"></i><fmt:message key="cart.brand_title"/>
         </a>
-        <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-light btn-sm">
-            <i class="bi bi-arrow-left me-1"></i> <fmt:message key="cart.btn_continue_shopping"/>
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Nút xem danh sách đơn hàng theo trạng thái -->
+            <a href="${pageContext.request.contextPath}/orders" class="btn btn-outline-warning btn-sm">
+                <i class="bi bi-box-seam me-1"></i> Đơn hàng của tôi
+            </a>
+            <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> <fmt:message key="cart.btn_continue_shopping"/>
+            </a>
+        </div>
     </div>
 </nav>
 

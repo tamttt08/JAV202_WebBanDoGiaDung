@@ -49,6 +49,17 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <!-- FORM TÌM KIẾM -->
             <form class="d-flex mx-auto col-lg-5 my-2 my-lg-0" action="${pageContext.request.contextPath}/home" method="get">
+                <!-- Giữ lại các thông số lọc khác nếu có -->
+                <c:if test="${not empty param.categoryId}">
+                    <input type="hidden" name="categoryId" value="${param.categoryId}">
+                </c:if>
+                <c:if test="${not empty param.minPrice}">
+                    <input type="hidden" name="minPrice" value="${param.minPrice}">
+                </c:if>
+                <c:if test="${not empty param.maxPrice}">
+                    <input type="hidden" name="maxPrice" value="${param.maxPrice}">
+                </c:if>
+
                 <div class="input-group">
                     <fmt:message key="nav.search_placeholder" var="searchPlaceholder"/>
                     <input class="form-control border-0" type="search" name="keyword"
@@ -148,9 +159,10 @@
 <div class="container my-5" id="product-section">
     <div class="row g-4">
 
-        <!-- DANH MỤC SIDEBAR -->
+        <!-- DANH MỤC & LỌC GIÁ SIDEBAR -->
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm rounded-3">
+            <!-- Danh mục sản phẩm -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white py-3 border-0">
                     <h6 class="fw-bold mb-0"><i class="bi bi-list-stars me-2 text-primary"></i><fmt:message key="cat.title"/></h6>
                 </div>
@@ -166,6 +178,38 @@
                             <i class="bi bi-chevron-right small me-2"></i>${cat.categoryName}
                         </a>
                     </c:forEach>
+                </div>
+            </div>
+
+            <!-- Khung Lọc Theo Giá -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-0">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-funnel me-2 text-primary"></i>Lọc theo giá</h6>
+                </div>
+                <div class="card-body">
+                    <form action="${pageContext.request.contextPath}/home" method="get">
+                        <!-- Giữ lại từ khóa tìm kiếm và danh mục đang chọn nếu có -->
+                        <c:if test="${not empty param.keyword}">
+                            <input type="hidden" name="keyword" value="${param.keyword}">
+                        </c:if>
+                        <c:if test="${not empty param.categoryId}">
+                            <input type="hidden" name="categoryId" value="${param.categoryId}">
+                        </c:if>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Giá từ (đ)</label>
+                            <input type="number" class="form-control form-control-sm" name="minPrice"
+                                   value="${param.minPrice}" placeholder="VD: 100000" min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Giá đến (đ)</label>
+                            <input type="number" class="form-control form-control-sm" name="maxPrice"
+                                   value="${param.maxPrice}" placeholder="VD: 2000000" min="0">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold">
+                            <i class="bi bi-check2-circle me-1"></i> Áp dụng lọc giá
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
