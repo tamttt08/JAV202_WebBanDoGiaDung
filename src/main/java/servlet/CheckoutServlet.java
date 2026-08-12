@@ -2,7 +2,10 @@ package servlet;
 
 import dao.OrderDAO;
 import dao.ProductDAO;
-import entity.*;
+import entity.Account;
+import entity.Order;
+import entity.OrderDetail;
+import entity.Product;
 import model.CartItem;
 import util.AuthUtil;
 import jakarta.servlet.ServletException;
@@ -17,12 +20,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "CheckoutServlet", value = {"/checkout", "/checkout/process"})
 public class CheckoutServlet extends HttpServlet {
 
-    private OrderDAO orderDAO = new OrderDAO();
-    private ProductDAO productDAO = new ProductDAO();
+    private static final Logger LOGGER = Logger.getLogger(CheckoutServlet.class.getName());
+
+    private final OrderDAO orderDAO = new OrderDAO();
+    private final ProductDAO productDAO = new ProductDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,7 +44,7 @@ public class CheckoutServlet extends HttpServlet {
         String path = request.getServletPath();
         HttpSession session = request.getSession();
 
-        // 1. KIỂM TRA ĐĂNG NHẬP
+        // 1. Kiểm tra đăng nhập
         if (!AuthUtil.isAuthenticated(request)) {
             session.setAttribute("error", "Vui lòng đăng nhập để tiến hành thanh toán!");
             session.setAttribute("REDIRECT_URL", request.getContextPath() + "/cart");
@@ -46,14 +53,21 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         Account account = AuthUtil.getUser(request);
-        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
 
-        if (cart == null || cart.isEmpty()) {
+        Object cartObj = session.getAttribute("cart");
+        if (!(cartObj instanceof Map)) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) cartObj;
+
+        if (cart.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 
-        // 2. HIỂN THỊ TRANG CHECKOUT
+        // 2. Hiển thị trang checkout
         if ("/checkout".equals(path)) {
             String[] selectedProductIds = request.getParameterValues("selectedProductIds");
 
@@ -74,7 +88,7 @@ public class CheckoutServlet extends HttpServlet {
                         grandTotal = grandTotal.add(item.getTotalPrice());
                     }
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Invalid product ID format: " + idStr, e);
                 }
             }
 
@@ -83,29 +97,34 @@ public class CheckoutServlet extends HttpServlet {
 
             request.getRequestDispatcher("/WEB-INF/views/client/checkout.jsp").forward(request, response);
 
-            // 3. XỬ LÝ LƯU ĐƠN HÀNG
+            // 3. Xử lý lưu đơn hàng và thanh toán
         } else if ("/checkout/process".equals(path)) {
-            List<CartItem> checkoutItems = (List<CartItem>) session.getAttribute("checkoutItems");
+            Object itemsObj = session.getAttribute("checkoutItems");
             BigDecimal grandTotal = (BigDecimal) session.getAttribute("checkoutGrandTotal");
 
-            if (checkoutItems == null || checkoutItems.isEmpty()) {
+            if (!(itemsObj instanceof List)) {
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            List<CartItem> checkoutItems = (List<CartItem>) itemsObj;
+
+            if (checkoutItems.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
 
-            // Nhận thông tin giao hàng từ form
             String receiverName = request.getParameter("receiverName");
             String receiverPhone = request.getParameter("receiverPhone");
             String address = request.getParameter("address");
             String note = request.getParameter("note");
 
             Order order = new Order();
-
             String orderCode = "DH" + System.currentTimeMillis() / 1000;
             order.setOrderCode(orderCode);
 
             order.setSubTotal(grandTotal);
-            order.setDiscountAmount(BigDecimal.ZERO); // Nếu chưa làm phần voucher thì để 0
+            order.setDiscountAmount(BigDecimal.ZERO);
             order.setTotalAmount(grandTotal);
 
             order.setReceiverName(receiverName);
@@ -118,7 +137,6 @@ public class CheckoutServlet extends HttpServlet {
                 order.setCustomer(account.getCustomer());
             }
 
-            // Tạo danh sách chi tiết đơn hàng (OrderDetail)
             List<OrderDetail> details = new ArrayList<>();
             for (CartItem item : checkoutItems) {
                 OrderDetail detail = new OrderDetail();
@@ -131,10 +149,10 @@ public class CheckoutServlet extends HttpServlet {
             order.setOrderDetails(details);
 
             try {
-                // STEP 1: Lưu đơn hàng vào CSDL
+                // STEP 1: Lưu đơn hàng và chi tiết vào CSDL
                 orderDAO.create(order);
 
-                // STEP 2: Cập nhật trừ số lượng tồn kho
+                // STEP 2: Cập nhật trừ số lượng tồn kho sản phẩm
                 for (CartItem item : checkoutItems) {
                     Product p = productDAO.findById(item.getProduct().getProductID());
                     if (p != null) {
@@ -144,7 +162,7 @@ public class CheckoutServlet extends HttpServlet {
                     }
                 }
 
-                // STEP 3: Xóa các sản phẩm đã đặt khỏi giỏ hàng
+                // STEP 3: Xóa sản phẩm đã đặt khỏi giỏ hàng
                 for (CartItem item : checkoutItems) {
                     cart.remove(item.getProduct().getProductID());
                 }
@@ -156,8 +174,7 @@ public class CheckoutServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/client/checkout-success.jsp").forward(request, response);
 
             } catch (Exception e) {
-                System.err.println("🔴 LỖI TẠO ĐƠN HÀNG:");
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Lỗi khi tạo đơn hàng", e);
 
                 session.setAttribute("errorMessage", "Đã xảy ra lỗi khi tạo đơn hàng: " + e.getMessage());
                 response.sendRedirect(request.getContextPath() + "/checkout");

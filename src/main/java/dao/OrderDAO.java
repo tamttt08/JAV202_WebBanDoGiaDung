@@ -197,11 +197,11 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
         try {
             EntityManager em = EntityConnectivity.getEntityManager();
             Object result = em.createQuery(jpql)
-                    .setParameter("status", Order.OrderStatus.Delivered) // Hoặc trạng thái hoàn thành của cậu
+                    .setParameter("status", Order.OrderStatus.Delivered)
                     .getSingleResult();
             return result != null ? (BigDecimal) result : BigDecimal.ZERO;
         } catch (Exception e) {
-            return BigDecimal.ZERO; // Trả về 0 nếu chưa có đơn nào, tránh bị NULL gây crash
+            return BigDecimal.ZERO;
         }
     }
 
@@ -226,6 +226,46 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
                     .getSingleResult();
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    /**
+     * Hàm bổ sung: Lấy danh sách đơn hàng của khách hàng theo trạng thái tab (Hỗ trợ Shopee-style tabs)
+     */
+    public List<Order> findByCustomerAndStatus(Integer customerID, String tab) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            StringBuilder jpql = new StringBuilder(
+                    "SELECT DISTINCT o FROM Order o " +
+                            "LEFT JOIN FETCH o.customer " +
+                            "LEFT JOIN FETCH o.orderDetails od " +
+                            "LEFT JOIN FETCH od.product " +
+                            "WHERE o.customer.customerID = :customerID"
+            );
+
+            // Phân loại điều kiện lọc theo tab trạng thái
+            if ("pending_payment".equals(tab)) {
+                jpql.append(" AND o.status = 'PENDING_PAYMENT'");
+            } else if ("pending_ship".equals(tab)) {
+                jpql.append(" AND o.status = 'PENDING_SHIP'");
+            } else if ("shipping".equals(tab)) {
+                jpql.append(" AND o.status = 'SHIPPING'");
+            } else if ("completed".equals(tab)) {
+                jpql.append(" AND o.status = 'COMPLETED'");
+            } else if ("returned".equals(tab)) {
+                jpql.append(" AND o.status = 'RETURNED'");
+            }
+
+            jpql.append(" ORDER BY o.orderDate DESC");
+
+            TypedQuery<Order> query = em.createQuery(jpql.toString(), Order.class);
+            query.setParameter("customerID", customerID);
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
         }
     }
 }
