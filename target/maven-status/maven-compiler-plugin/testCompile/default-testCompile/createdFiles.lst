@@ -1,0 +1,17 @@
+test\HomeAutomationTest.class
+test\ProductDetailAutomationTest.class
+test\RegisterAutomationTest.class
+dao\CartDAOTest.class
+dao\AccountDAOTest.class
+dao\OrderDetailDAOTest.class
+dao\CouponDAOTest.class
+dao\ProductDAOTest.class
+dao\ProductImageDAOTest.class
+dao\FeedbackDAOTest.class
+test\CartAutomationTest.class
+dao\OrderDAOTest.class
+dao\CategoryDAOTest.class
+dao\CustomerDAOTest.class
+test\LoginAutomationTest.class
+dao\StaffDAOTest.class
+dao\StatsDAOTest.class

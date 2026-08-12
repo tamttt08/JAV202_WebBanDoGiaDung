@@ -10,20 +10,35 @@
 <html lang="${userLang}">
 <head>
     <meta charset="UTF-8">
-    <title><fmt:message key="profile.title"/></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><fmt:message key="profile.title"/> - GIA DỤNG STORE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { background-color: #f8f9fa; }
         .profile-card { border-radius: 12px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
         .avatar-circle { width: 80px; height: 80px; background-color: #0d6efd; color: #fff; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 15px; }
     </style>
 </head>
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<div class="container py-5">
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="${pageContext.request.contextPath}/home">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i>GIA DỤNG STORE
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="${pageContext.request.contextPath}/orders" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-seam me-1"></i> Đơn hàng của tôi
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="container py-5 flex-grow-1">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-7">
             <div class="card profile-card p-4 bg-white">
@@ -61,7 +76,9 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                                 <fmt:message key="profile.ph_phone" var="phPhone"/>
-                                <input type="text" class="form-control" name="phone" value="${customer.phone}" placeholder="${phPhone}">
+                                <input type="tel" class="form-control" name="phone" value="${customer.phone}"
+                                       placeholder="${phPhone}" pattern="[0-9]{10,11}"
+                                       title="Số điện thoại phải bao gồm từ 10 đến 11 chữ số!">
                             </div>
                         </div>
 
@@ -70,7 +87,8 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                                 <fmt:message key="profile.ph_email" var="phEmail"/>
-                                <input type="email" class="form-control" name="email" value="${customer.email}" placeholder="${phEmail}">
+                                <input type="email" class="form-control" name="email" value="${customer.email}"
+                                       placeholder="${phEmail}" title="Vui lòng nhập đúng định dạng email (ví dụ: name@gmail.com)">
                             </div>
                         </div>
 
@@ -113,20 +131,24 @@
     </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="bg-dark text-white text-center py-4 mt-auto">
+    <div class="container">
+        <p class="mb-0 small">&copy; 2026 Gia Dụng Store. All rights reserved.</p>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // i18n text cho JS
     var msgLoadingAddress = "<fmt:message key='profile.js_loading_address'/>";
     var msgCoords = "<fmt:message key='profile.js_coords'/>";
     var msgGpsError = "<fmt:message key='profile.js_gps_error'/>";
     var msgNoGpsSupport = "<fmt:message key='profile.js_no_gps_support'/>";
     var userLang = "${userLang}";
 
-    // 1. Tọa độ mặc định (TP.HCM)
     var defaultLat = 10.7769;
     var defaultLng = 106.7009;
 
-    // 2. Khởi tạo bản đồ Leaflet
     var map = L.map('map').setView([defaultLat, defaultLng], 14);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -135,16 +157,16 @@
 
     var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
 
-    // 3. Hàm lấy tên địa chỉ từ tọa độ
+    setTimeout(function() { map.invalidateSize(); }, 400);
+
     function reverseGeocode(lat, lng) {
-        var addressInput = document.getElementById('address') || document.querySelector('textarea[name="address"]');
+        var addressInput = document.getElementById('address');
         if (!addressInput) return;
 
         addressInput.placeholder = msgLoadingAddress;
 
-        // Tự động thay đổi ngôn ngữ phản hồi API theo userLang
         var acceptLang = userLang === 'en' ? 'en' : 'vi';
-        var url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=${acceptLang}`;
+        var url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lng + "&accept-language=" + acceptLang;
 
         fetch(url)
             .then(response => {
@@ -155,22 +177,20 @@
                 if (data && data.display_name) {
                     addressInput.value = data.display_name;
                 } else {
-                    addressInput.value = `${msgCoords} ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                    addressInput.value = msgCoords + " " + lat.toFixed(5) + ", " + lng.toFixed(5);
                 }
             })
             .catch(err => {
                 console.warn("Could not retrieve street name, recording coordinates:", err);
-                addressInput.value = `${msgCoords} ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                addressInput.value = msgCoords + " " + lat.toFixed(5) + ", " + lng.toFixed(5);
             });
     }
 
-    // 4. Kéo thả ghim trên map
     marker.on('dragend', function (e) {
         var position = marker.getLatLng();
         reverseGeocode(position.lat, position.lng);
     });
 
-    // 5. Click trực tiếp lên map
     map.on('click', function (e) {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
@@ -178,7 +198,6 @@
         reverseGeocode(lat, lng);
     });
 
-    // 6. Định vị GPS người dùng
     function getCurrentLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(

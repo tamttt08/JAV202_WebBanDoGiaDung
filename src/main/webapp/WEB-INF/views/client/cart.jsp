@@ -10,30 +10,38 @@
 <html lang="${userLang}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><fmt:message key="cart.title"/> - <fmt:message key="cart.brand_title"/></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<!-- NAVBAR (Đồng bộ toàn hệ thống) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">
-            <i class="bi bi-shop me-2"></i><fmt:message key="cart.brand_title"/>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="${pageContext.request.contextPath}/home">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i><fmt:message key="cart.brand_title"/>
         </a>
-        <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-light btn-sm">
-            <i class="bi bi-arrow-left me-1"></i> <fmt:message key="cart.btn_continue_shopping"/>
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Nút xem danh sách đơn hàng theo trạng thái -->
+            <a href="${pageContext.request.contextPath}/orders" class="btn btn-outline-warning btn-sm">
+                <i class="bi bi-box-seam me-1"></i> Đơn hàng của tôi
+            </a>
+            <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> <fmt:message key="cart.btn_continue_shopping"/>
+            </a>
+        </div>
     </div>
 </nav>
 
-<div class="container my-4">
+<!-- MAIN CONTENT -->
+<div class="container my-4 flex-grow-1">
     <h3 class="fw-bold mb-4"><i class="bi bi-cart3 me-2"></i><fmt:message key="cart.page_heading"/></h3>
 
     <c:choose>
         <c:when test="${empty cart}">
-            <div class="card border-0 shadow-sm p-5 text-center">
+            <div class="card border-0 shadow-sm p-5 text-center my-5">
                 <i class="bi bi-cart-x text-muted display-1 mb-3"></i>
                 <h5 class="text-secondary"><fmt:message key="cart.empty_title"/></h5>
                 <p class="text-muted"><fmt:message key="cart.empty_desc"/></p>
@@ -175,6 +183,13 @@
     <input type="hidden" name="productId" id="updateProductId">
     <input type="hidden" name="quantity" id="updateQuantity">
 </form>
+
+<!-- FOOTER (Đồng bộ với các trang khác) -->
+<footer class="bg-dark text-white text-center py-4 mt-auto">
+    <div class="container">
+        <p class="mb-0 small">&copy; 2026 Gia Dụng Store. All rights reserved.</p>
+    </div>
+</footer>
 
 <script>
     <fmt:message key="cart.js_items_suffix" var="jsItemsSuffix"/>

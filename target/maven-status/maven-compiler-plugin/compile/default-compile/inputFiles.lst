@@ -1,54 +1,60 @@
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\ProductDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Coupon.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\service\EntityConnectivity.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\util\AuthUtil.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminCategoryServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\LoginServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Cart.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\CheckoutServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\filter\Utf8Filter.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\StaffDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\OrderDetail.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\ProductImage.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\CouponDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Order.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\DashboardServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\ProfileServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\CustomerDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\CategoryDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\ProductImageDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\RegisterServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\CartServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Customer.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\CreateProductServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\util\ParamUtil.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Account.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\FeedbackDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Product.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\CreateCategoryServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\CrudDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\LogoutServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloApplication.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\StatsDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Category.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminOverviewServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloResource.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\OrderDetailDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\CartDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminProductServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\HomeServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Feedback.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\DeleteProductServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\ProductDetailServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\filter\AuthFilter.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\model\CartItem.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminOrderServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\EditCategoryServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\EditProductServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\entity\Staff.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminAccountServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\OrderDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\servlet\DeleteCategoryServlet.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\dao\AccountDAO.java
-D:\IntelliJ IDEA\IdeaProjects\JAV202_WebBanDoGiaDung\src\main\java\util\FileUtil.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminCategoryServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\DeleteCategoryServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\StatsDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\EditProductServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\util\EmailUtil.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\OrderDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Product.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\model\CartItem.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\LanguageServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\FeedbackDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminAccountServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\LogoutServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\CategoryDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\HomeServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\AccountDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\ForgotPasswordServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\CrudDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\CartDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Category.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\CreateAccountServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Account.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Order.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\DeleteProductServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\SearchSuggestionServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\util\FileUtil.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Feedback.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Cart.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\RegisterServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\service\EntityConnectivity.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminProductServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\CheckoutServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\ProductDetailServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\ProfileServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\CreateCategoryServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Coupon.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\EditCategoryServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\filter\AuthFilter.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\StaffDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\OrderDetail.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\OrderDetailDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\CreateProductServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminOverviewServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\util\AuthUtil.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\AdminOrderServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\DashboardServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\filter\Utf8Filter.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloResource.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\CouponDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\com\example\JAV202_WebBanDoGiaDung\HelloApplication.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\OrderServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\util\ParamUtil.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Staff.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\ProductDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\LoginServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\CustomerDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\ProductImage.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\servlet\CartServlet.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\dao\ProductImageDAO.java
+C:\Users\tuandz\eclipse-workspace\JAV202_WebBanDoGiaDung\src\main\java\entity\Customer.java

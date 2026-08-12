@@ -13,7 +13,6 @@
     <properties>
         <maven.compiler.target>23</maven.compiler.target>
         <maven.compiler.source>23</maven.compiler.source>
-        <junit.version>5.7.0</junit.version>
     </properties>
 
     <dependencies>
@@ -38,7 +37,7 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- JSTL API & Impl (Bỏ scope compile mặc định để IntelliJ auto-index Taglib) -->
+        <!-- JSTL API & Impl -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
@@ -58,6 +57,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JUnit 4 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Hibernate 6 -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -72,7 +79,7 @@
             <version>8.3.0</version>
         </dependency>
 
-        <!-- Mail API (Khuyên dùng eclipse.angus thay vì api đơn thuần để gửi mail không bị thiếu provider) -->
+        <!-- Mail API -->
         <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>jakarta.mail</artifactId>
@@ -86,27 +93,32 @@
             <version>1.11.0</version>
         </dependency>
 
-        <!-- JUnit -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
         </dependency>
+
+        <!-- Selenium Java (Dùng cho Automation Test mở web tự động) -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.18.1</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Jackson JSON (Thêm jackson-databind để dùng parse JSON mượt hơn nếu cần) -->
+        <!-- Jackson JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.17.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
         <!-- Plugin WAR -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>

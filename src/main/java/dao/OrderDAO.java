@@ -191,17 +191,17 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
         }
     }
 
-    // 1. Tính tổng doanh thu (Chỉ tính các đơn đã thành công / Delivered / Completed)
+    // 1. Tính tổng doanh thu (Chỉ tính các đơn đã thành công / Delivered)
     public BigDecimal getTotalRevenue() {
         String jpql = "SELECT SUM(o.totalAmount) FROM Order o WHERE o.status = :status";
         try {
             EntityManager em = EntityConnectivity.getEntityManager();
             Object result = em.createQuery(jpql)
-                    .setParameter("status", Order.OrderStatus.Delivered) // Hoặc trạng thái hoàn thành của cậu
+                    .setParameter("status", Order.OrderStatus.Delivered)
                     .getSingleResult();
             return result != null ? (BigDecimal) result : BigDecimal.ZERO;
         } catch (Exception e) {
-            return BigDecimal.ZERO; // Trả về 0 nếu chưa có đơn nào, tránh bị NULL gây crash
+            return BigDecimal.ZERO;
         }
     }
 
@@ -226,6 +226,61 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
                     .getSingleResult();
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    /**
+     * Hàm bổ sung: Lấy danh sách đơn hàng của khách hàng theo trạng thái tab (Hỗ trợ Shopee-style tabs)
+     */
+    public List<Order> findByCustomerAndStatus(Integer customerID, String tab) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            StringBuilder jpql = new StringBuilder(
+                    "SELECT DISTINCT o FROM Order o " +
+                            "LEFT JOIN FETCH o.customer " +
+                            "LEFT JOIN FETCH o.orderDetails od " +
+                            "LEFT JOIN FETCH od.product " +
+                            "WHERE o.customer.customerID = :customerID"
+            );
+
+            // Xác định Enum trạng thái tương ứng với tab
+            Order.OrderStatus targetStatus = null;
+
+            if ("pending_payment".equals(tab)) {
+                targetStatus = Order.OrderStatus.Pending;
+            } else if ("pending_ship".equals(tab)) {
+                targetStatus = Order.OrderStatus.Paid;
+            } else if ("shipping".equals(tab)) {
+                targetStatus = Order.OrderStatus.Shipping;
+            } else if ("completed".equals(tab)) {
+                targetStatus = Order.OrderStatus.Delivered;
+            } else if ("returned".equals(tab)) {
+                targetStatus = Order.OrderStatus.Cancelled;
+            }
+
+            // Nếu có trạng thái cụ thể, thêm điều kiện vào JPQL
+            if (targetStatus != null) {
+                jpql.append(" AND o.status = :targetStatus");
+            }
+
+            jpql.append(" ORDER BY o.orderDate DESC");
+
+            TypedQuery<Order> query = em.createQuery(jpql.toString(), Order.class);
+            query.setParameter("customerID", customerID);
+
+            // Set parameter cho trạng thái nếu có
+            if (targetStatus != null) {
+                query.setParameter("targetStatus", targetStatus);
+            }
+
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 }

@@ -10,19 +10,20 @@
 <html lang="${userLang}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><fmt:message key="checkout.title"/> - <fmt:message key="cart.brand_title"/></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<!-- NAVBAR (Đồng bộ hệ thống) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">
-            <i class="bi bi-shop me-2"></i><fmt:message key="cart.brand_title"/>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="${pageContext.request.contextPath}/home">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i><fmt:message key="cart.brand_title"/>
         </a>
         <a href="${pageContext.request.contextPath}/cart" class="btn btn-outline-light btn-sm">
             <i class="bi bi-arrow-left me-1"></i> <fmt:message key="checkout.btn_back_cart"/>
@@ -30,7 +31,8 @@
     </div>
 </nav>
 
-<div class="container my-4">
+<!-- MAIN CONTENT -->
+<div class="container my-4 flex-grow-1">
     <h3 class="fw-bold mb-4"><i class="bi bi-credit-card me-2"></i><fmt:message key="checkout.page_heading"/></h3>
 
     <c:if test="${not empty errorMessage}">
@@ -65,18 +67,15 @@
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <label for="address" class="form-label fw-semibold mb-0"><fmt:message key="checkout.lbl_address"/> <span class="text-danger">*</span></label>
-                            <!-- Nút định vị GPS -->
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="getCurrentLocation()">
                                 <i class="bi bi-geo-alt-fill me-1"></i><fmt:message key="checkout.btn_get_location"/>
                             </button>
                         </div>
 
-                        <!-- Ô nhập địa chỉ -->
                         <fmt:message key="checkout.ph_address" var="phAddress"/>
                         <textarea class="form-control mb-2" id="address" name="address" rows="2"
                                   placeholder="${phAddress}" required>${customer != null ? customer.address : ''}</textarea>
 
-                        <!-- Khung hiển thị bản đồ -->
                         <div id="map" style="height: 280px; width: 100%; border-radius: 8px;" class="border"></div>
                         <small class="text-muted"><i class="bi bi-info-circle me-1"></i><fmt:message key="checkout.map_note"/></small>
                     </div>
@@ -88,11 +87,33 @@
                     </div>
 
                     <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-wallet2 me-2 text-primary"></i><fmt:message key="checkout.sec_payment_method"/></h5>
+
+                    <!-- COD -->
                     <div class="form-check border rounded p-3 mb-2">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked onclick="togglePaymentMethod()">
                         <label class="form-check-label fw-semibold" for="cod">
                             <i class="bi bi-cash-stack me-2 text-success"></i><fmt:message key="checkout.pm_cod"/>
                         </label>
+                    </div>
+
+                    <!-- Chuyển khoản QR Ngân hàng (Đã cấu hình STK 866602008 - DUONG THANH TUAN) -->
+                    <div class="form-check border rounded p-3 mb-2">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="qrTransfer" value="QR_TRANSFER" onclick="togglePaymentMethod()">
+                        <label class="form-check-label fw-semibold" for="qrTransfer">
+                            <i class="bi bi-qr-code-scan me-2 text-primary"></i> Chuyển khoản quét mã QR Ngân hàng
+                        </label>
+                    </div>
+
+                    <!-- Khung hiển thị QR Code -->
+                    <div id="qrCodeSection" class="text-center p-3 border rounded bg-white mt-3" style="display: none;">
+                        <p class="fw-bold text-danger mb-2">Quét mã QR để thanh toán nhanh chóng</p>
+                        <img id="vietQrImg" src="" alt="QR Ngân hàng" class="img-fluid border rounded mb-2" style="max-width: 220px;">
+                        <div class="small text-muted">
+                            <p class="mb-1">Ngân hàng: <b>MB Bank (Quân Đội)</b></p>
+                            <p class="mb-1">Số tài khoản: <b>866602008</b></p>
+                            <p class="mb-0">Chủ tài khoản: <b>DUONG THANH TUAN</b></p>
+                            <p class="text-primary mt-2 mb-0 fw-semibold">Nội dung chuyển khoản tự động sẽ theo mã đơn hàng.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,6 +173,13 @@
     </form>
 </div>
 
+<!-- FOOTER (Đồng bộ hệ thống) -->
+<footer class="bg-dark text-white text-center py-4 mt-auto">
+    <div class="container">
+        <p class="mb-0 small">&copy; 2026 Gia Dụng Store. All rights reserved.</p>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <fmt:message key="checkout.js_getting_address" var="jsGettingAddress"/>
@@ -162,11 +190,31 @@
 <fmt:message key="checkout.js_err_no_support" var="jsErrNoSupport"/>
 
 <script>
-    // 1. Tọa độ mặc định (TP.HCM)
+    function togglePaymentMethod() {
+        var qrSection = document.getElementById('qrCodeSection');
+        var isQrSelected = document.getElementById('qrTransfer').checked;
+
+        if (isQrSelected) {
+            qrSection.style.display = 'block';
+
+            var amountStr = "${checkoutGrandTotal}";
+            var amount = parseFloat(amountStr) || 0;
+
+            var bankId = "MB";
+            var accountNo = "866602008";
+            var template = "compact2";
+            var addInfo = "Thanh toan don hang";
+
+            var qrUrl = "https://img.vietqr.io/image/" + bankId + "-" + accountNo + "-" + template + ".png?amount=" + amount + "&addInfo=" + encodeURIComponent(addInfo);
+            document.getElementById('vietQrImg').src = qrUrl;
+        } else {
+            qrSection.style.display = 'none';
+        }
+    }
+
     var defaultLat = 10.7769;
     var defaultLng = 106.7009;
 
-    // 2. Khởi tạo bản đồ Leaflet
     var map = L.map('map').setView([defaultLat, defaultLng], 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -175,38 +223,48 @@
 
     var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
 
-    // Fix lỗi hiển thị map khi nằm trong khung
+    // Tránh lỗi hiển thị xám bản đồ khi load tab ẩn
     setTimeout(function() { map.invalidateSize(); }, 400);
 
-    // 3. Hàm lấy địa chỉ từ Tọa độ
+    // Sửa lỗi hàm reverseGeocode để chắc chắn luôn điền được dữ liệu vào ô input
     function reverseGeocode(lat, lng) {
         var addressInput = document.getElementById('address');
-        addressInput.placeholder = "${jsGettingAddress}";
+        addressInput.value = "Đang lấy địa chỉ...";
 
-        var url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=${'${userLang}'}`;
+        var url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lng;
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.display_name) {
-                    addressInput.value = data.display_name;
-                } else {
-                    addressInput.value = `${jsCoordsPrefix} ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-                }
-            })
-            .catch(err => {
-                console.error("Lỗi reverseGeocode:", err);
-                addressInput.value = `${jsCoordsPrefix} ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-            });
+        fetch(url, {
+            headers: {
+                'Accept-Language': 'vi'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.display_name) {
+                addressInput.value = data.display_name;
+            } else {
+                addressInput.value = "Tọa độ: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+            }
+        })
+        .catch(err => {
+            console.error("Lỗi lấy địa chỉ từ Nominatim:", err);
+            addressInput.value = "Tọa độ vị trí: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+        });
     }
 
-    // 4. Kéo thả ghim
+    // Tự động lấy địa chỉ mặc định ngay khi vừa load trang lên ghim ở giữa
+    reverseGeocode(defaultLat, defaultLng);
+
     marker.on('dragend', function (e) {
         var position = marker.getLatLng();
         reverseGeocode(position.lat, position.lng);
     });
 
-    // 5. Click lên map
     map.on('click', function (e) {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
@@ -214,11 +272,10 @@
         reverseGeocode(lat, lng);
     });
 
-    // 6. Định vị GPS người dùng
     function getCurrentLocation() {
         if (navigator.geolocation) {
             var addressInput = document.getElementById('address');
-            addressInput.placeholder = "${jsGettingLocation}";
+            addressInput.value = "Đang lấy vị trí hiện tại của bạn...";
 
             navigator.geolocation.getCurrentPosition(
                 function (position) {
@@ -231,28 +288,18 @@
                     reverseGeocode(lat, lng);
                 },
                 function (error) {
-                    console.warn("Lỗi vị trí:", error.message);
-                    let msg = "";
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            msg = "${jsErrPermDenied}";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                        case error.TIMEOUT:
-                        default:
-                            msg = "${jsErrUnavailable}";
-                    }
-                    alert(msg);
-                    addressInput.placeholder = "${phAddress}";
+                    console.warn("Lỗi định vị GPS:", error.message);
+                    alert("Không thể lấy vị trí hiện tại của bạn. Vui lòng cấp quyền vị trí hoặc chọn trực tiếp trên bản đồ!");
+                    addressInput.value = "";
                 },
                 {
-                    enableHighAccuracy: false,
+                    enableHighAccuracy: true,
                     timeout: 10000,
-                    maximumAge: 60000
+                    maximumAge: 0
                 }
             );
         } else {
-            alert("${jsErrNoSupport}");
+            alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
         }
     }
 </script>

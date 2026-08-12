@@ -1,3 +1,4 @@
+servlet\OrderServlet.class
 dao\OrderDAO.class
 servlet\AdminOverviewServlet.class
 servlet\DeleteCategoryServlet.class
@@ -10,9 +11,11 @@ entity\OrderDetail.class
 dao\FeedbackDAO.class
 servlet\DeleteProductServlet.class
 servlet\HomeServlet.class
+servlet\CreateAccountServlet.class
 servlet\AdminProductServlet.class
 servlet\EditCategoryServlet.class
 entity\ProductImage.class
+servlet\SearchSuggestionServlet.class
 util\AuthUtil.class
 com\example\JAV202_WebBanDoGiaDung\HelloApplication.class
 dao\OrderDetailDAO.class
@@ -25,6 +28,7 @@ servlet\CreateProductServlet.class
 servlet\CartServlet.class
 servlet\DashboardServlet.class
 servlet\CreateCategoryServlet.class
+servlet\ForgotPasswordServlet.class
 servlet\RegisterServlet.class
 dao\ProductDAO.class
 servlet\LogoutServlet.class
@@ -32,8 +36,10 @@ util\ParamUtil.class
 entity\Coupon.class
 entity\Order$OrderStatus.class
 model\CartItem.class
+util\EmailUtil$1.class
 dao\CartDAO.class
 dao\AccountDAO.class
+servlet\LanguageServlet.class
 servlet\LoginServlet.class
 entity\Category.class
 servlet\EditProductServlet.class
@@ -43,6 +49,7 @@ servlet\ProfileServlet.class
 dao\StatsDAO.class
 com\example\JAV202_WebBanDoGiaDung\HelloResource.class
 filter\Utf8Filter.class
+util\EmailUtil.class
 entity\Cart.class
 servlet\ProductDetailServlet.class
 entity\Account$Role.class

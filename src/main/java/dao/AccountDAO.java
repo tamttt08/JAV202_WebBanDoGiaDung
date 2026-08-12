@@ -218,4 +218,64 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             em.close();
         }
     }
+
+    public List<Account> searchAccounts(String keyword, String role, String statusStr) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        try {
+            StringBuilder jpql = new StringBuilder("SELECT a FROM Account a WHERE 1=1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                jpql.append(" AND LOWER(a.username) LIKE :keyword");
+            }
+            if (role != null && !role.trim().isEmpty()) {
+                jpql.append(" AND a.role = :role");
+            }
+            if (statusStr != null && !statusStr.trim().isEmpty()) {
+                jpql.append(" AND a.active = :active");
+            }
+
+            TypedQuery<Account> query = em.createQuery(jpql.toString(), Account.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
+            }
+            if (role != null && !role.trim().isEmpty()) {
+                query.setParameter("role", role);
+            }
+            if (statusStr != null && !statusStr.trim().isEmpty()) {
+                query.setParameter("active", Boolean.parseBoolean(statusStr));
+            }
+
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    // Cập nhật mật khẩu mới cho tài khoản
+    public boolean updatePassword(int accountId, String newPassword) {
+        EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            Account account = em.find(Account.class, accountId);
+            if (account != null) {
+                account.setPassword(newPassword); // Lưu ý: Nếu có mã hóa mật khẩu thì mã hóa ở đây trước khi set
+                em.merge(account);
+                trans.commit();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            if (trans.isActive()) trans.rollback();
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
 }
