@@ -10,19 +10,20 @@
 <html lang="${userLang}">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><fmt:message key="checkout.title"/> - <fmt:message key="cart.brand_title"/></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<!-- NAVBAR (Đồng bộ hệ thống) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">
-            <i class="bi bi-shop me-2"></i><fmt:message key="cart.brand_title"/>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="${pageContext.request.contextPath}/home">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i><fmt:message key="cart.brand_title"/>
         </a>
         <a href="${pageContext.request.contextPath}/cart" class="btn btn-outline-light btn-sm">
             <i class="bi bi-arrow-left me-1"></i> <fmt:message key="checkout.btn_back_cart"/>
@@ -30,7 +31,8 @@
     </div>
 </nav>
 
-<div class="container my-4">
+<!-- MAIN CONTENT -->
+<div class="container my-4 flex-grow-1">
     <h3 class="fw-bold mb-4"><i class="bi bi-credit-card me-2"></i><fmt:message key="checkout.page_heading"/></h3>
 
     <c:if test="${not empty errorMessage}">
@@ -171,6 +173,13 @@
     </form>
 </div>
 
+<!-- FOOTER (Đồng bộ hệ thống) -->
+<footer class="bg-dark text-white text-center py-4 mt-auto">
+    <div class="container">
+        <p class="mb-0 small">&copy; 2026 Gia Dụng Store. All rights reserved.</p>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <fmt:message key="checkout.js_getting_address" var="jsGettingAddress"/>
@@ -244,7 +253,6 @@
         })
         .catch(err => {
             console.error("Lỗi lấy địa chỉ từ Nominatim:", err);
-            // Fallback nếu lỗi mạng hoặc API chặn: Vẫn điền được tọa độ để khách hàng không bị kẹt
             addressInput.value = "Tọa độ vị trí: " + lat.toFixed(5) + ", " + lng.toFixed(5);
         });
     }

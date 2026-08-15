@@ -15,19 +15,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
         .login-card {
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
         .login-header {
-            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
             color: white;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
         }
         .form-control:focus {
             box-shadow: none;
@@ -35,32 +32,42 @@
         }
     </style>
 </head>
-<body class="d-flex align-items-center min-vh-100 py-5">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<div class="container">
+<!-- NAVBAR HEADER (Đồng bộ với trang chủ) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="${pageContext.request.contextPath}/home">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i> <fmt:message key="nav.brand"/>
+        </a>
+
+        <div class="ms-auto d-flex align-items-center">
+            <!-- DROPDOWN CHUYỂN NGÔN NGỮ -->
+            <div class="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle btn-sm fw-semibold" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-globe me-1"></i> ${userLang eq 'en' ? 'English' : 'Tiếng Việt'}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li>
+                        <a class="dropdown-item ${userLang eq 'vi' ? 'active' : ''}" href="${pageContext.request.contextPath}/change-language?lang=vi">
+                            🇻🇳 Tiếng Việt
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item ${userLang eq 'en' ? 'active' : ''}" href="${pageContext.request.contextPath}/change-language?lang=en">
+                            🇺🇸 English
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN CONTENT - FORM ĐĂNG NHẬP -->
+<div class="container my-auto py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-
-            <!-- NÚT CHUYỂN NGÔN NGỮ (GÓC TRÊN CỦA FORM) -->
-            <div class="d-flex justify-content-end mb-2">
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle fw-semibold bg-white shadow-sm" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-globe me-1"></i> ${userLang eq 'en' ? 'English' : 'Tiếng Việt'}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li>
-                            <a class="dropdown-item ${userLang eq 'vi' ? 'active' : ''}" href="${pageContext.request.contextPath}/change-language?lang=vi">
-                                🇻🇳 Tiếng Việt
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item ${userLang eq 'en' ? 'active' : ''}" href="${pageContext.request.contextPath}/change-language?lang=en">
-                                🇺🇸 English
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
 
             <div class="card login-card">
                 <!-- Card Header -->
@@ -96,7 +103,6 @@
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>${sessionScope.authMessage}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        <!-- Xóa message sau khi đã hiển thị xong -->
                         <c:remove var="authMessage" scope="session"/>
                     </c:if>
 
@@ -162,6 +168,13 @@
         </div>
     </div>
 </div>
+
+<!-- FOOTER (Đồng bộ với trang chủ) -->
+<footer class="bg-dark text-white text-center py-4 mt-auto">
+    <div class="container">
+        <p class="mb-0 small">&copy; 2026 Gia Dụng Store. All rights reserved.</p>
+    </div>
+</footer>
 
 <!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

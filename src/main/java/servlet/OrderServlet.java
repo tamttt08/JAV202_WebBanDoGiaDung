@@ -28,7 +28,7 @@ public class OrderServlet extends HttpServlet {
             return;
         }
 
-        // 2. Lấy Account thông qua AuthUtil (Key đúng là "user" đã được định nghĩa sẵn)
+        // 2. Lấy Account thông qua AuthUtil
         Account account = AuthUtil.getUser(request);
         if (account == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -38,8 +38,6 @@ public class OrderServlet extends HttpServlet {
         // 3. Lấy thông tin Customer từ Account
         Customer customer = account.getCustomer();
         if (customer == null) {
-            // Nếu tài khoản đăng nhập không phải là khách hàng (ví dụ Staff/Manager),
-            // thông báo hoặc điều hướng về trang phù hợp
             request.setAttribute("error", "Tài khoản quản trị không có lịch sử đơn hàng cá nhân!");
             request.getRequestDispatcher("/WEB-INF/views/client/home.jsp").forward(request, response);
             return;

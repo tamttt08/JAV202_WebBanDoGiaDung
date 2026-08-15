@@ -47,26 +47,33 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- FORM TÌM KIẾM -->
-            <form class="d-flex mx-auto col-lg-5 my-2 my-lg-0" action="${pageContext.request.contextPath}/home" method="get">
-                <!-- Giữ lại các thông số lọc khác nếu có -->
-                <c:if test="${not empty param.categoryId}">
-                    <input type="hidden" name="categoryId" value="${param.categoryId}">
-                </c:if>
-                <c:if test="${not empty param.minPrice}">
-                    <input type="hidden" name="minPrice" value="${param.minPrice}">
-                </c:if>
-                <c:if test="${not empty param.maxPrice}">
-                    <input type="hidden" name="maxPrice" value="${param.maxPrice}">
-                </c:if>
+            <!-- FORM TÌM KIẾM CÓ GỢI Ý -->
+            <div class="mx-auto col-lg-5 my-2 my-lg-0 position-relative">
+                <form action="${pageContext.request.contextPath}/home" method="get" class="d-flex m-0">
+                    <!-- Giữ lại các thông số lọc khác nếu có -->
+                    <c:if test="${not empty param.categoryId}">
+                        <input type="hidden" name="categoryId" value="${param.categoryId}">
+                    </c:if>
+                    <c:if test="${not empty param.minPrice}">
+                        <input type="hidden" name="minPrice" value="${param.minPrice}">
+                    </c:if>
+                    <c:if test="${not empty param.maxPrice}">
+                        <input type="hidden" name="maxPrice" value="${param.maxPrice}">
+                    </c:if>
 
-                <div class="input-group">
-                    <fmt:message key="nav.search_placeholder" var="searchPlaceholder"/>
-                    <input class="form-control border-0" type="search" name="keyword"
-                           value="${param.keyword}" placeholder="${searchPlaceholder}" aria-label="Search">
-                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                    <div class="input-group">
+                        <fmt:message key="nav.search_placeholder" var="searchPlaceholder"/>
+                        <input class="form-control border-0" type="search" id="searchInput" name="keyword"
+                               value="${param.keyword}" placeholder="${searchPlaceholder}" autocomplete="off">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+
+                <!-- KHUNG DROPDOWN HIỂN THỊ GỢI Ý -->
+                <div id="searchSuggestions" class="list-group position-absolute w-100 shadow bg-white rounded-bottom border mt-1" style="z-index: 1050; display: none; max-height: 350px; overflow-y: auto;">
+                    <!-- Kết quả gợi ý từ Servlet sẽ được load vào đây qua AJAX -->
                 </div>
-            </form>
+            </div>
 
             <!-- DROPDOWN CHUYỂN NGÔN NGỮ -->
             <div class="dropdown me-3">
@@ -283,5 +290,51 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SCRIPT XỬ LÝ GỢI Ý TÌM KIẾM (LIVE SEARCH) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("searchInput");
+        const suggestionsBox = document.getElementById("searchSuggestions");
+
+        // Lắng nghe sự kiện khi người dùng gõ phím vào ô tìm kiếm
+        searchInput.addEventListener("input", function() {
+            let keyword = this.value.trim();
+
+            if (keyword.length === 0) {
+                suggestionsBox.style.display = "none";
+                suggestionsBox.innerHTML = "";
+                return;
+            }
+
+            // Gọi AJAX ngầm đến Servlet gợi ý
+            fetch('${pageContext.request.contextPath}/search-suggest?keyword=' + encodeURIComponent(keyword))
+                .then(response => response.text())
+                .then(html => {
+                    if (html.trim() !== "") {
+                        suggestionsBox.innerHTML = html;
+                        suggestionsBox.style.display = "block";
+                    } else {
+                        suggestionsBox.style.display = "none";
+                    }
+                })
+                .catch(error => console.error('Lỗi tìm kiếm gợi ý:', error));
+        });
+
+        // Ẩn khung gợi ý khi người dùng click chuột ra ngoài khu vực tìm kiếm
+        document.addEventListener("click", function(event) {
+            if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                suggestionsBox.style.display = "none";
+            }
+        });
+
+        // Hiện lại gợi ý nếu click vào ô input mà đã có chữ sẵn
+        searchInput.addEventListener("focus", function() {
+            if (this.value.trim().length > 0 && suggestionsBox.innerHTML.trim() !== "") {
+                suggestionsBox.style.display = "block";
+            }
+        });
+    });
+</script>
 </body>
 </html>

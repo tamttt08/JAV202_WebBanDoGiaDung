@@ -19,13 +19,11 @@ public class ProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 🔴 1. Kiểm tra đăng nhập thông qua AuthUtil
         if (!AuthUtil.isAuthenticated(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // 🔴 2. Lấy Account đang đăng nhập từ AuthUtil
         Account account = AuthUtil.getUser(request);
 
         if (account != null) {
@@ -42,13 +40,11 @@ public class ProfileServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // 🔴 1. Kiểm tra đăng nhập
         if (!AuthUtil.isAuthenticated(request)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // 🔴 2. Lấy Account hiện tại
         Account account = AuthUtil.getUser(request);
 
         String fullName = request.getParameter("fullName");
@@ -56,9 +52,29 @@ public class ProfileServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
-        if (account != null) {
-            Customer customer = customerDAO.findByAccountId(account.getAccountID());
+        Customer customer = customerDAO.findByAccountId(account.getAccountID());
 
+        // 1. Kiểm tra định dạng số điện thoại (10 - 11 chữ số)
+        String phoneRegex = "^\\d{10,11}$";
+        if (phone != null && !phone.isEmpty() && !phone.matches(phoneRegex)) {
+            request.setAttribute("message", "Số điện thoại không hợp lệ! Vui lòng nhập đúng từ 10 đến 11 chữ số.");
+            request.setAttribute("messageType", "danger");
+            request.setAttribute("customer", customer);
+            request.getRequestDispatcher("/WEB-INF/views/user/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // 2. Kiểm tra định dạng Email khắt khe (bắt buộc tên miền trước dấu chấm >= 2 ký tự và đuôi mở rộng >= 2 ký tự)
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]{2,}\\.[a-zA-Z]{2,}$";
+        if (email != null && !email.isEmpty() && !email.matches(emailRegex)) {
+            request.setAttribute("message", "Địa chỉ Email không hợp lệ! Vui lòng nhập đúng tên miền chuẩn (ví dụ: name@gmail.com).");
+            request.setAttribute("messageType", "danger");
+            request.setAttribute("customer", customer);
+            request.getRequestDispatcher("/WEB-INF/views/user/profile.jsp").forward(request, response);
+            return;
+        }
+
+        if (account != null) {
             if (customer != null) {
                 customer.setFullName(fullName);
                 customer.setEmail(email);

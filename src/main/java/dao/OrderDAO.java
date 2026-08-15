@@ -191,7 +191,7 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
         }
     }
 
-    // 1. Tính tổng doanh thu (Chỉ tính các đơn đã thành công / Delivered / Completed)
+    // 1. Tính tổng doanh thu (Chỉ tính các đơn đã thành công / Delivered)
     public BigDecimal getTotalRevenue() {
         String jpql = "SELECT SUM(o.totalAmount) FROM Order o WHERE o.status = :status";
         try {
@@ -243,29 +243,44 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
                             "WHERE o.customer.customerID = :customerID"
             );
 
-            // Phân loại điều kiện lọc theo tab trạng thái
+            // Xác định Enum trạng thái tương ứng với tab
+            Order.OrderStatus targetStatus = null;
+
             if ("pending_payment".equals(tab)) {
-                jpql.append(" AND o.status = 'PENDING_PAYMENT'");
+                targetStatus = Order.OrderStatus.Pending;
             } else if ("pending_ship".equals(tab)) {
-                jpql.append(" AND o.status = 'PENDING_SHIP'");
+                targetStatus = Order.OrderStatus.Paid;
             } else if ("shipping".equals(tab)) {
-                jpql.append(" AND o.status = 'SHIPPING'");
+                targetStatus = Order.OrderStatus.Shipping;
             } else if ("completed".equals(tab)) {
-                jpql.append(" AND o.status = 'COMPLETED'");
+                targetStatus = Order.OrderStatus.Delivered;
             } else if ("returned".equals(tab)) {
-                jpql.append(" AND o.status = 'RETURNED'");
+                targetStatus = Order.OrderStatus.Cancelled;
+            }
+
+            // Nếu có trạng thái cụ thể, thêm điều kiện vào JPQL
+            if (targetStatus != null) {
+                jpql.append(" AND o.status = :targetStatus");
             }
 
             jpql.append(" ORDER BY o.orderDate DESC");
 
             TypedQuery<Order> query = em.createQuery(jpql.toString(), Order.class);
             query.setParameter("customerID", customerID);
+
+            // Set parameter cho trạng thái nếu có
+            if (targetStatus != null) {
+                query.setParameter("targetStatus", targetStatus);
+            }
+
             return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         } finally {
-            em.close();
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 }
