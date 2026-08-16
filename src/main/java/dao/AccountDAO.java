@@ -36,7 +36,7 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             em.getTransaction().begin();
             em.merge(entity);
             em.getTransaction().commit();
-            return true; // Sửa thêm return true khi update thành công nhé
+            return true;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -110,7 +110,6 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
         }
     }
 
-    // --- BỔ SUNG 1: Kiểm tra username đã tồn tại hay chưa ---
     public boolean existsByUsername(String username) {
         if (username == null) return false;
         EntityManager em = EntityConnectivity.getEntityManager();
@@ -128,20 +127,14 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
         }
     }
 
-    // --- BỔ SUNG 2: Lưu Account cùng lúc với Customer (sử dụng 1 Transaction) ---
     public boolean createAccountWithCustomer(Account account, Customer customer) {
         EntityManager em = EntityConnectivity.getEntityManager();
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
-
-            // 1. Lưu Account
             em.persist(account);
-
-            // 2. Gán Account cho Customer rồi lưu Customer
             customer.setAccount(account);
             em.persist(customer);
-
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -179,18 +172,20 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
 
     public boolean updateAccountRole(int accountId, String newRole) {
         EntityManager em = EntityConnectivity.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
         try {
-            em.getTransaction().begin();
-            String jpql = "UPDATE Account a SET a.role = :role WHERE a.accountID = :id";
-            int updatedRows = em.createQuery(jpql)
-                    .setParameter("role", newRole)
-                    .setParameter("id", accountId)
-                    .executeUpdate();
-            em.getTransaction().commit();
-            return updatedRows > 0;
+            trans.begin();
+            Account acc = em.find(Account.class, accountId);
+            if (acc != null) {
+                acc.setRole(Account.Role.valueOf(newRole));
+                em.merge(acc);
+                trans.commit();
+                return true;
+            }
+            return false;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (trans.isActive()) {
+                trans.rollback();
             }
             e.printStackTrace();
             return false;
@@ -240,7 +235,7 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
                 query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
             }
             if (role != null && !role.trim().isEmpty()) {
-                query.setParameter("role", role);
+                query.setParameter("role", Account.Role.valueOf(role));
             }
             if (statusStr != null && !statusStr.trim().isEmpty()) {
                 query.setParameter("active", Boolean.parseBoolean(statusStr));
@@ -255,7 +250,6 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
         }
     }
 
-    // Cập nhật mật khẩu mới cho tài khoản
     public boolean updatePassword(int accountId, String newPassword) {
         EntityManager em = EntityConnectivity.getEntityManager();
         EntityTransaction trans = em.getTransaction();
@@ -263,7 +257,7 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             trans.begin();
             Account account = em.find(Account.class, accountId);
             if (account != null) {
-                account.setPassword(newPassword); // Lưu ý: Nếu có mã hóa mật khẩu thì mã hóa ở đây trước khi set
+                account.setPassword(newPassword);
                 em.merge(account);
                 trans.commit();
                 return true;
@@ -277,5 +271,4 @@ public class AccountDAO implements CrudDAO<Account, Integer> {
             em.close();
         }
     }
-
 }

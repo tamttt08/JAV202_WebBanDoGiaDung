@@ -138,7 +138,6 @@
             targetMenu.classList.add('active');
 
             let url = targetMenu.getAttribute('data-url');
-            // Lấy tất cả tham số query hiện có trên URL để giữ lại trạng thái tìm kiếm
             const fullSearch = window.location.search;
             if (fullSearch.includes('?')) {
                 const queryString = fullSearch.substring(fullSearch.indexOf('?'));
@@ -154,9 +153,75 @@
             }
         }
     });
+
+    // --- HÀM TOÀN CỤC XỬ LÝ CẬP NHẬT VAI TRÒ TÀI KHOẢN ---
+    function updateAccountRole(accountId, newRole) {
+        if (confirm("Cậu có chắc chắn muốn thay đổi vai trò của tài khoản #" + accountId + " thành " + newRole + " không?")) {
+            const formData = new URLSearchParams();
+            formData.append('action', 'update-role');
+            formData.append('accountId', accountId);
+            formData.append('role', newRole);
+
+            fetch(contextPath + '/admin/account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Cập nhật vai trò thất bại!");
+                if (typeof searchAccounts === 'function') {
+                    searchAccounts();
+                } else {
+                    loadTab('/admin/account');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Đã xảy ra lỗi khi cập nhật vai trò!");
+                location.reload();
+            });
+        } else {
+            if (typeof searchAccounts === 'function') {
+                searchAccounts();
+            } else {
+                loadTab('/admin/account');
+            }
+        }
+    }
+
+    // --- HÀM TOÀN CỤC XỬ LÝ RESET MẬT KHẨU VÀ GỬI EMAIL ---
+    function resetAccountPassword(accountId) {
+        if (confirm("Cậu có chắc chắn muốn cấp lại mật khẩu mới và gửi về email cho tài khoản #" + accountId + " không?")) {
+            const formData = new URLSearchParams();
+            formData.append('action', 'reset-password');
+            formData.append('id', accountId);
+
+            fetch(contextPath + '/admin/account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                if (typeof searchAccounts === 'function') {
+                    searchAccounts();
+                } else {
+                    loadTab('/admin/account');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Đã xảy ra lỗi khi kết nối đến server!");
+            });
+        }
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Modals ... -->
 </body>
 </html>
