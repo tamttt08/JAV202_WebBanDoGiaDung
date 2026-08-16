@@ -8,7 +8,7 @@
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3306/JAV202_WebBanDoGiaDung?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC"/>
+                      value="jdbc:mysql://localhost:3306/JAV202_WebBanDoGiaDung?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Ho_Chi_Minh"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="123456"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

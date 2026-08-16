@@ -36,8 +36,8 @@ public class Order {
     @JoinColumn(name = "CouponID")
     private Coupon coupon;
 
-    @Column(name = "OrderDate", insertable = false, updatable = false)
-    private LocalDateTime orderDate;
+    @Column(name = "OrderDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime orderDate = LocalDateTime.now();
 
     @Column(name = "SubTotal", nullable = false, precision = 12, scale = 2)
     private BigDecimal subTotal;

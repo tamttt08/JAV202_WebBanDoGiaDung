@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 
 @WebServlet("/admin/overview")
 public class AdminOverviewServlet extends HttpServlet {
@@ -20,41 +22,66 @@ public class AdminOverviewServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
+        String filterRange = request.getParameter("filterRange");
+        String filterDate = request.getParameter("filterDate");
+
+        // Ưu tiên xử lý: Nếu có filterDate hợp lệ thì ép range về specific_date,
+        // ngược lại nếu chọn range khác (như this_month, today...) thì bỏ qua filterDate.
+        if (filterDate != null && !filterDate.trim().isEmpty() && !"all".equals(filterRange)) {
+            filterRange = "specific_date";
+        } else if (filterRange == null || filterRange.trim().isEmpty()) {
+            filterRange = "all";
+        }
+
+        // Nếu người dùng chọn mốc thời gian dạng select (all, today, this_month, this_year),
+        // ta vô hiệu hóa filterDate để tránh xung đột câu lệnh query.
+        if (!"specific_date".equals(filterRange)) {
+            filterDate = "";
+        }
+
         long totalProducts = 0;
         long pendingOrders = 0;
         long totalCustomers = 0;
-        double totalRevenue = 0.0;
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        List<Object[]> top5Products = null;
 
-        // Bọc try-catch riêng từng DAO để nếu 1 cái lỗi thì các cái khác vẫn chạy
         try {
             totalProducts = statsDAO.getTotalProducts();
         } catch (Exception e) {
-            System.err.println("🔴 Lỗi getTotalProducts: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
-            pendingOrders = statsDAO.getPendingOrdersCount();
+            pendingOrders = statsDAO.getPendingOrdersCount(filterRange, filterDate);
         } catch (Exception e) {
-            System.err.println("🔴 Lỗi getPendingOrdersCount: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
             totalCustomers = statsDAO.getTotalCustomers();
         } catch (Exception e) {
-            System.err.println("🔴 Lỗi getTotalCustomers: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
-            totalRevenue = statsDAO.getTotalRevenue();
+            totalRevenue = statsDAO.getTotalRevenue(filterRange, filterDate);
         } catch (Exception e) {
-            System.err.println("🔴 Lỗi getTotalRevenue: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        // Đẩy sang JSP
+        try {
+            top5Products = statsDAO.getTop5BestSellingProducts(filterRange, filterDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         request.setAttribute("totalProducts", totalProducts);
         request.setAttribute("pendingOrders", pendingOrders);
         request.setAttribute("totalCustomers", totalCustomers);
         request.setAttribute("totalRevenue", totalRevenue);
+        request.setAttribute("top5Products", top5Products);
+        request.setAttribute("filterRange", filterRange);
+        request.setAttribute("filterDate", filterDate);
 
         request.getRequestDispatcher("/WEB-INF/views/admin/fragments/overview.jsp").forward(request, response);
     }

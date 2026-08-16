@@ -249,6 +249,58 @@
         }
     });
 
+    // --- XỬ LÝ LẮNG NGHE THAY ĐỔI BỘ LỌC THỜI GIAN CHO TAB TỔNG QUAN (OVERVIEW) ---
+    document.addEventListener('change', function(event) {
+        if (event.target && (event.target.id === 'filterRange' || event.target.id === 'filterDate')) {
+            let range = document.getElementById('filterRange').value;
+            let dateVal = document.getElementById('filterDate').value;
+
+            // Nếu người dùng chọn mốc thời gian qua select (all, today, this_month...), xóa ngày cụ thể đi
+            if (event.target.id === 'filterRange') {
+                dateVal = '';
+                const dateInput = document.getElementById('filterDate');
+                if (dateInput) dateInput.value = '';
+            }
+            // Nếu người dùng chọn ngày cụ thể, tự ép range về specific_date
+            else if (event.target.id === 'filterDate' && dateVal) {
+                range = 'specific_date';
+            }
+
+            const mainContent = document.getElementById('main-content');
+            if (!mainContent) return;
+
+            mainContent.style.opacity = '0.5';
+
+            let targetUrl = contextPath + '/admin/overview?filterRange=' + encodeURIComponent(range);
+            if (dateVal) {
+                targetUrl += '&filterDate=' + encodeURIComponent(dateVal);
+            }
+
+            fetch(targetUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.text();
+            })
+            .then(html => {
+                mainContent.innerHTML = html;
+                mainContent.style.opacity = '1';
+
+                let displayUrl = contextPath + '/admin/dashboard?tab=overview&filterRange=' + encodeURIComponent(range);
+                if (dateVal) {
+                    displayUrl += '&filterDate=' + encodeURIComponent(dateVal);
+                }
+                window.history.pushState(null, '', displayUrl);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mainContent.style.opacity = '1';
+                alert("Lỗi tải dữ liệu thống kê!");
+            });
+        }
+    });
+
     // --- HÀM TOÀN CỤC TÌM KIẾM TÀI KHOẢN QUA AJAX ---
     function searchAccounts(e) {
         if (e) {
@@ -336,6 +388,7 @@
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- Modal container chứa chi tiết đơn hàng -->
 <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -377,7 +430,6 @@
 </div>
 
 <script>
-    // 🔴 KHAI BÁO THẲNG VÀO WINDOW ĐỂ TRÁNH LỖI SCOPE KHI LOAD AJAX
     window.viewOrderDetail = function(orderId) {
         var url = '${pageContext.request.contextPath}/admin/order?action=detail&id=' + orderId;
 
@@ -403,7 +455,7 @@
                 alert('Không thể tải chi tiết đơn hàng. Kiểm tra Console (F12)!');
             });
     };
-    // Cập nhật số lượng
+
     window.updateOrderDetailQuantity = window.updateDetailQuantity = function(detailId, quantity, orderId) {
         if (quantity < 1) {
             alert("Số lượng phải lớn hơn 0!");
@@ -419,7 +471,6 @@
             .catch(err => console.error(err));
     };
 
-    // Xóa món
     window.deleteOrderDetail = function(detailId, orderId) {
         if (confirm("Cậu có chắc muốn xóa sản phẩm này không?")) {
             var url = contextPath + '/admin/order?action=deleteDetail&detailId=' + detailId + '&orderId=' + orderId;
@@ -433,7 +484,6 @@
         }
     };
 
-    // Thêm món
     window.addOrderDetail = window.addDetailToOrder = function(orderId) {
         var productSelect = document.getElementById('addProductId');
         var quantityInput = document.getElementById('addQuantity');
@@ -458,7 +508,6 @@
             .catch(err => console.error(err));
     };
 
-    // Cập nhật trạng thái đơn hàng từ Bảng Order
     window.changeOrderStatus = function(orderId, newStatus) {
         if (confirm("Cậu có chắc chắn muốn thay đổi trạng thái đơn hàng #" + orderId + " không?")) {
             var url = '${pageContext.request.contextPath}/admin/order?action=updateStatus&id=' + orderId + '&status=' + newStatus;
@@ -469,7 +518,6 @@
                     return response.text();
                 })
                 .then(html => {
-                    // Tải lại bảng order-table với trạng thái mới
                     document.getElementById('main-content').innerHTML = html;
                 })
                 .catch(err => {
@@ -477,12 +525,10 @@
                     alert("Không thể cập nhật trạng thái đơn hàng!");
                 });
         } else {
-            // Nếu hủy chọn thì reload lại tab để reset về trạng thái cũ trên select
             loadTab('/admin/order');
         }
     };
 
-    // Hàm mở Modal và gán thông tin đơn hàng hiện tại
     window.openUpdateStatusModal = function(orderId, currentStatus) {
         document.getElementById('statusOrderId').value = orderId;
         document.getElementById('selectOrderStatus').value = currentStatus;
@@ -491,7 +537,6 @@
         statusModal.show();
     };
 
-    // Hàm gửi request cập nhật trạng thái khi nhấn Lưu
     window.saveOrderStatus = function() {
         var orderId = document.getElementById('statusOrderId').value;
         var newStatus = document.getElementById('selectOrderStatus').value;
@@ -504,12 +549,10 @@
                 return response.text();
             })
             .then(html => {
-                // Ẩn Modal đi
                 var modalElement = document.getElementById('updateStatusModal');
                 var modalInstance = bootstrap.Modal.getInstance(modalElement);
                 if (modalInstance) modalInstance.hide();
 
-                // Reload lại bảng Order với trạng thái vừa cập nhật
                 document.getElementById('main-content').innerHTML = html;
             })
             .catch(err => {
