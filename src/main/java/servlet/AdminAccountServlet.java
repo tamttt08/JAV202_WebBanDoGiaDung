@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import util.EmailUtil; // Đảm bảo import đúng package util
+import util.EmailUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,7 +69,6 @@ public class AdminAccountServlet extends HttpServlet {
                 int accountId = Integer.parseInt(request.getParameter("id"));
                 Account acc = accountDAO.findById(accountId);
 
-                // Lấy email linh hoạt: Ưu tiên lấy từ Staff nếu có, nếu không thì lấy từ Customer
                 String email = null;
                 if (acc != null) {
                     if (acc.getStaff() != null && acc.getStaff().getEmail() != null) {
@@ -106,18 +105,26 @@ public class AdminAccountServlet extends HttpServlet {
             return;
         }
 
-        // 5. XỬ LÝ CẬP NHẬT VAI TRÒ
+        // 5. XỬ LÝ CẬP NHẬT VAI TRÒ (Phản hồi text/plain chuẩn cho AJAX fetch)
         if ("update-role".equals(action)) {
+            response.setContentType("text/plain;charset=UTF-8");
             try {
                 int accountId = Integer.parseInt(request.getParameter("accountId"));
                 String newRole = request.getParameter("role");
 
-                accountDAO.updateAccountRole(accountId, newRole);
-                request.getSession().setAttribute("message", "Cập nhật vai trò thành công!");
+                boolean updated = accountDAO.updateAccountRole(accountId, newRole);
+                if (updated) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("Cập nhật vai trò thành công!");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.getWriter().write("Cập nhật vai trò thất bại!");
+                }
             } catch (Exception e) {
-                request.getSession().setAttribute("error", "Cập nhật vai trò thất bại!");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Lỗi hệ thống: " + e.getMessage());
             }
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard?tab=account");
+            return;
         }
     }
 }
