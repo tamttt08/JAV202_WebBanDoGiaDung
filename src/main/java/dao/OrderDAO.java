@@ -244,19 +244,7 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
             );
 
             // Xác định Enum trạng thái tương ứng với tab
-            Order.OrderStatus targetStatus = null;
-
-            if ("pending_payment".equals(tab)) {
-                targetStatus = Order.OrderStatus.Pending;
-            } else if ("pending_ship".equals(tab)) {
-                targetStatus = Order.OrderStatus.Paid;
-            } else if ("shipping".equals(tab)) {
-                targetStatus = Order.OrderStatus.Shipping;
-            } else if ("completed".equals(tab)) {
-                targetStatus = Order.OrderStatus.Delivered;
-            } else if ("returned".equals(tab)) {
-                targetStatus = Order.OrderStatus.Cancelled;
-            }
+            Order.OrderStatus targetStatus = getTargetStatus(tab);
 
             // Nếu có trạng thái cụ thể, thêm điều kiện vào JPQL
             if (targetStatus != null) {
@@ -282,5 +270,22 @@ public class OrderDAO implements CrudDAO<Order, Integer> {
                 em.close();
             }
         }
+    }
+
+    private static Order.OrderStatus getTargetStatus(String tab) {
+        Order.OrderStatus targetStatus = null;
+
+        if ("pending_payment".equals(tab)) {
+            targetStatus = Order.OrderStatus.Pending;
+        } else if ("pending_ship".equals(tab)) {
+            targetStatus = Order.OrderStatus.Paid;
+        } else if ("shipping".equals(tab)) {
+            targetStatus = Order.OrderStatus.Shipping;
+        } else if ("completed".equals(tab)) {
+            targetStatus = Order.OrderStatus.Delivered;
+        } else if ("returned".equals(tab)) {
+            targetStatus = Order.OrderStatus.Cancelled;
+        }
+        return targetStatus;
     }
 }

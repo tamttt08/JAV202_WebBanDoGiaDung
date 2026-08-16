@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/admin/account/add")
+@WebServlet(name = "CreateAccountServlet", value = "/admin/account/add")
 public class CreateAccountServlet extends HttpServlet {
 
     private AccountDAO accountDAO = new AccountDAO();

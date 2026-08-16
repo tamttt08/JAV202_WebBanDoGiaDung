@@ -21,7 +21,10 @@ public class StatsDAO {
     public long getPendingOrdersCount() {
         EntityManager em = EntityConnectivity.getEntityManager();
         try {
-            return em.createQuery("SELECT COUNT(o) FROM Order o WHERE o.status = entity.Order.OrderStatus.Pending", Long.class).getSingleResult();
+            return em.createQuery(
+                            "SELECT COUNT(o) FROM Order o WHERE o.status = :status", Long.class)
+                    .setParameter("status", Order.OrderStatus.Pending)
+                    .getSingleResult();
         } finally {
             em.close();
         }

@@ -95,6 +95,10 @@ public class CheckoutServlet extends HttpServlet {
             session.setAttribute("checkoutItems", checkoutItems);
             session.setAttribute("checkoutGrandTotal", grandTotal);
 
+            if (account != null && account.getCustomer() != null) {
+                request.setAttribute("customer", account.getCustomer());
+            }
+
             request.getRequestDispatcher("/WEB-INF/views/client/checkout.jsp").forward(request, response);
 
             // 3. Xử lý lưu đơn hàng và thanh toán
