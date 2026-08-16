@@ -126,7 +126,6 @@
         });
     });
 
-    // FIX LỖI: Load đúng tab khi có tham số trên URL
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const currentTab = urlParams.get('tab') || 'product';
@@ -154,7 +153,42 @@
         }
     });
 
-    // --- HÀM TOÀN CỤC XỬ LÝ CẬP NHẬT VAI TRÒ TÀI KHOẢN ---
+    // --- HÀM TOÀN CỤC TÌM KIẾM TÀI KHOẢN QUA AJAX ---
+    function searchAccounts(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const keyword = document.getElementById('searchKeyword')?.value || '';
+        const role = document.getElementById('searchRole')?.value || '';
+        const status = document.getElementById('searchStatus')?.value || '';
+
+        const url = contextPath + "/admin/account?action=search&keyword="
+            + encodeURIComponent(keyword) + "&role=" + encodeURIComponent(role) + "&status=" + encodeURIComponent(status);
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error("Lỗi tải dữ liệu tìm kiếm");
+                return response.text();
+            })
+            .then(html => {
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.innerHTML = html;
+                }
+                const newUrl = contextPath + "/admin/dashboard?tab=account&action=search&keyword="
+                    + encodeURIComponent(keyword) + "&role=" + encodeURIComponent(role) + "&status=" + encodeURIComponent(status);
+                history.pushState(null, '', newUrl);
+            })
+            .catch(err => {
+                console.error("Lỗi tìm kiếm:", err);
+            });
+
+        return false;
+    }
+
+    // --- HÀM TOÀN CỤC CẬP NHẬT VAI TRÒ ---
     function updateAccountRole(accountId, newRole) {
         if (confirm("Cậu có chắc chắn muốn thay đổi vai trò của tài khoản #" + accountId + " thành " + newRole + " không?")) {
             const formData = new URLSearchParams();
@@ -164,34 +198,24 @@
 
             fetch(contextPath + '/admin/account', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: formData.toString()
             })
             .then(response => {
                 if (!response.ok) throw new Error("Cập nhật vai trò thất bại!");
-                if (typeof searchAccounts === 'function') {
-                    searchAccounts();
-                } else {
-                    loadTab('/admin/account');
-                }
+                searchAccounts();
             })
             .catch(err => {
                 console.error(err);
                 alert("Đã xảy ra lỗi khi cập nhật vai trò!");
-                location.reload();
+                searchAccounts();
             });
         } else {
-            if (typeof searchAccounts === 'function') {
-                searchAccounts();
-            } else {
-                loadTab('/admin/account');
-            }
+            searchAccounts();
         }
     }
 
-    // --- HÀM TOÀN CỤC XỬ LÝ RESET MẬT KHẨU VÀ GỬI EMAIL ---
+    // --- HÀM TOÀN CỤC RESET MẬT KHẨU ---
     function resetAccountPassword(accountId) {
         if (confirm("Cậu có chắc chắn muốn cấp lại mật khẩu mới và gửi về email cho tài khoản #" + accountId + " không?")) {
             const formData = new URLSearchParams();
@@ -200,19 +224,13 @@
 
             fetch(contextPath + '/admin/account', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: formData.toString()
             })
             .then(response => response.text())
             .then(result => {
                 alert(result);
-                if (typeof searchAccounts === 'function') {
-                    searchAccounts();
-                } else {
-                    loadTab('/admin/account');
-                }
+                searchAccounts();
             })
             .catch(err => {
                 console.error(err);
@@ -222,6 +240,5 @@
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

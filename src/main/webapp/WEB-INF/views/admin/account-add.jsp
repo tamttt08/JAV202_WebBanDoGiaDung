@@ -1,96 +1,110 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-<c:set var="userLang" value="${not empty sessionScope.LANG ? sessionScope.LANG : 'vi'}" scope="session" />
-<fmt:setLocale value="${userLang}" />
-<fmt:setBundle basename="messages" />
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0"><i class="bi bi-people-fill me-2"></i>Quản Lý Tài Khoản</h3>
+        <button class="btn btn-primary btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+            <i class="bi bi-person-plus-fill me-1"></i> Thêm Tài Khoản
+        </button>
+    </div>
 
-<!DOCTYPE html>
-<html lang="${userLang}">
-<head>
-    <meta charset="UTF-8">
-    <title><fmt:message key="account_add.title"/> - <fmt:message key="admin.brand_title"/></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
-<body class="bg-light">
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <div class="card-body">
-
-                    <div class="d-flex align-items-center mb-4">
-                        <fmt:message key="account_add.btn_back" var="backTitle"/>
-                        <a href="${pageContext.request.contextPath}/admin/dashboard?tab=account" class="btn btn-outline-secondary me-3" title="${backTitle}">
-                            <i class="bi bi-arrow-left"></i>
-                        </a>
-                        <h4 class="fw-bold mb-0 text-primary"><fmt:message key="account_add.title"/></h4>
-                    </div>
-
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>${errorMessage}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </c:if>
-
-                    <form action="${pageContext.request.contextPath}/admin/account/add" method="post">
-
-                        <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-shield-lock me-2"></i><fmt:message key="account_add.sec_login"/></h6>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_username"/> (<span class="text-danger">*</span>)</label>
-                                <input type="text" name="username" class="form-control" placeholder="username" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_password"/> (<span class="text-danger">*</span>)</label>
-                                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_role"/></label>
-                                <select name="role" class="form-select">
-                                    <option value="Customer" selected><fmt:message key="account_add.opt_customer"/></option>
-                                    <option value="Staff"><fmt:message key="account_add.opt_staff"/></option>
-                                    <option value="Admin"><fmt:message key="account_add.opt_admin"/></option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-person-badge me-2"></i><fmt:message key="account_add.sec_personal"/></h6>
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-12">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_fullname"/></label>
-                                <input type="text" name="fullName" class="form-control" placeholder="Nguyễn Văn A">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_email"/> (<span class="text-danger">*</span>)</label>
-                                <input type="email" name="email" class="form-control" placeholder="example@gmail.com" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-semibold"><fmt:message key="account_add.lbl_phone"/></label>
-                                <input type="tel" name="phone" class="form-control" placeholder="0901234567">
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary fw-bold py-2">
-                                <i class="bi bi-plus-circle me-1"></i> <fmt:message key="account_add.btn_submit"/>
-                            </button>
-                        </div>
-
-                    </form>
-
+    <!-- KHUNG TÌM KIẾM TÀI KHOẢN -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form id="searchAccountForm" class="row g-3" onsubmit="return searchAccounts(event)">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Từ khóa (Tên đăng nhập)</label>
+                    <input type="text" class="form-control form-control-sm" id="searchKeyword" value="${param.keyword}" placeholder="Nhập tên đăng nhập..." onkeyup="searchAccounts()">
                 </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Vai trò</label>
+                    <select id="searchRole" class="form-select form-select-sm" onchange="searchAccounts()">
+                        <option value="">Tất cả vai trò</option>
+                        <option value="Staff" ${param.role eq 'Staff' ? 'selected' : ''}>Nhân viên</option>
+                        <option value="Manager" ${param.role eq 'Manager' ? 'selected' : ''}>Quản lý</option>
+                        <option value="Customer" ${param.role eq 'Customer' ? 'selected' : ''}>Khách hàng</option>
+                        <option value="Admin" ${param.role eq 'Admin' ? 'selected' : ''}>Admin</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Trạng thái</label>
+                    <select id="searchStatus" class="form-select form-select-sm" onchange="searchAccounts()">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="true" ${param.status eq 'true' ? 'selected' : ''}>Hoạt động</option>
+                        <option value="false" ${param.status eq 'false' ? 'selected' : ''}>Đã khóa</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold">
+                        <i class="bi bi-search me-1"></i> Tìm kiếm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BẢNG HIỂN THỊ KẾT QUẢ -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Mã</th>
+                            <th>Tên Đăng Nhập</th>
+                            <th>Vai Trò</th>
+                            <th>Trạng Thái</th>
+                            <th class="text-end pe-3">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="acc" items="${accounts}">
+                            <tr>
+                                <td class="ps-3 fw-semibold">#${acc.accountID}</td>
+                                <td>
+                                    <div class="fw-bold text-dark"><i class="bi bi-person-circle me-1 text-secondary"></i>${acc.username}</div>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm fw-semibold ${acc.role eq 'Manager' ? 'text-danger border-danger' : (acc.role eq 'Staff' ? 'text-primary border-primary' : 'text-secondary border-secondary')}"
+                                            style="width: 130px;"
+                                            onchange="updateAccountRole(${acc.accountID}, this.value)">
+                                        <option value="Customer" ${acc.role eq 'Customer' ? 'selected' : ''}>Customer</option>
+                                        <option value="Staff" ${acc.role eq 'Staff' ? 'selected' : ''}>Staff</option>
+                                        <option value="Manager" ${acc.role eq 'Manager' ? 'selected' : ''}>Manager</option>
+                                        <option value="Admin" ${acc.role eq 'Admin' ? 'selected' : ''}>Admin</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <span class="badge ${acc.active ? 'bg-success' : 'bg-warning text-dark'}">
+                                        ${acc.active ? 'Hoạt động' : 'Đã khóa'}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <button type="button" class="btn btn-outline-warning btn-sm me-1"
+                                            onclick="resetAccountPassword(${acc.accountID})" title="Random mật khẩu mới & Gửi Email">
+                                        <i class="bi bi-key-fill"></i>
+                                    </button>
+
+                                    <a href="${pageContext.request.contextPath}/admin/account?action=toggle-status&id=${acc.accountID}&status=${!acc.active}"
+                                       class="btn btn-outline-${acc.active ? 'danger' : 'success'} btn-sm"
+                                       title="${acc.active ? 'Khóa' : 'Mở khóa'}">
+                                        <i class="bi bi-shield-${acc.active ? 'lock' : 'check'}"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty accounts}">
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Không tìm thấy tài khoản phù hợp.</td>
+                            </tr>
+                        </c:if>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
